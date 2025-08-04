@@ -11,6 +11,7 @@ services:
     volumes:
       # Mount source code for hot reloading
       - ./src:/app/src:delegated
+      - ./public:/app/public:delegated
       - ./package.json:/app/package.json:ro
       - ./package-lock.json:/app/package-lock.json:ro
       - ./astro.config.mjs:/app/astro.config.mjs:ro
