@@ -55,7 +55,9 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "npm run build && npm run preview",
+    command: process.env.CI 
+      ? "NODE_ENV=production npm run build && NODE_ENV=production npm run preview"
+      : "npm run build && npm run preview",
     url: process.env.CI ? "http://localhost:4321/watt-media-website" : "http://localhost:4321",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000
