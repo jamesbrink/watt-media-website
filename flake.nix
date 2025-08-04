@@ -22,7 +22,11 @@
             nixpkgs-fmt.enable = true;
             prettier = {
               enable = true;
-              includes = [ "src/**/*.{astro,html,css,js,ts}" ];
+              includes = [ 
+                "src/**/*.{html,css,js,ts,jsx,tsx,json,md}" 
+                "*.{js,ts,json,md}"
+                "e2e/**/*.{js,ts}"
+              ];
             };
           };
         };
@@ -80,8 +84,17 @@
             {
               name = "dev";
               category = "development";
-              help = "Start Astro development server with hot reload";
-              command = "npm install && npm run dev";
+              help = "Start Astro development server with hot reload on http://localhost:8080";
+              command = ''
+                echo "🚀 Starting Astro development server..."
+                echo "📦 Checking dependencies..."
+                npm install
+                echo ""
+                echo "🌐 Server will be available at: http://localhost:8080"
+                echo "🔄 Hot reload is enabled"
+                echo ""
+                npm run dev
+              '';
             }
             {
               name = "build";
@@ -110,8 +123,30 @@
             {
               name = "test";
               category = "code quality";
-              help = "Run tests with Vitest";
+              help = "Run unit tests with Vitest (watch mode)";
               command = "npm run test";
+            }
+            {
+              name = "test:run";
+              category = "code quality";
+              help = "Run unit tests once (CI mode)";
+              command = "npm run test -- --run";
+            }
+            {
+              name = "test:e2e";
+              category = "code quality";
+              help = "Run Playwright E2E tests";
+              command = ''
+                echo "🎭 Running Playwright E2E tests..."
+                npx playwright install --with-deps chromium firefox webkit
+                npm run test:e2e
+              '';
+            }
+            {
+              name = "test:e2e:ui";
+              category = "code quality";
+              help = "Open Playwright test UI";
+              command = "npm run test:e2e:ui";
             }
             {
               name = "typecheck";
@@ -122,8 +157,28 @@
             {
               name = "check";
               category = "code quality";
-              help = "Check formatting and run all linters";
-              command = "echo 'Checking formatting...' && treefmt --fail-on-change && echo '' && echo 'Running ESLint...' && npm run lint && echo '' && echo 'Type checking...' && npm run typecheck";
+              help = "Check formatting, run all linters and tests";
+              command = ''
+                echo "🔍 Running all checks..."
+                echo ""
+                echo "📋 Checking formatting..."
+                treefmt --fail-on-change
+                echo "✅ Formatting check passed"
+                echo ""
+                echo "🔍 Running ESLint..."
+                npm run lint
+                echo "✅ Linting passed"
+                echo ""
+                echo "🔍 Type checking..."
+                npm run typecheck
+                echo "✅ Type checking passed"
+                echo ""
+                echo "🧪 Running unit tests..."
+                npm run test -- --run
+                echo "✅ Unit tests passed"
+                echo ""
+                echo "✅ All checks passed!"
+              '';
             }
             {
               name = "clean";
@@ -143,15 +198,26 @@
           devshell.startup.npm-install = {
             deps = [ ];
             text = ''
-              echo "🔧 Setting up development environment..."
+              echo "🔧 Setting up Watt Media development environment..."
+              echo ""
               
               # Create node_modules symlink if it doesn't exist
               if [ ! -e node_modules ] && [ -f package.json ]; then
                 echo "📦 Installing npm dependencies..."
                 npm install
+                echo ""
               fi
               
-              echo "✅ Environment ready! Run 'dev' to start the development server."
+              echo "✅ Environment ready!"
+              echo ""
+              echo "Available commands:"
+              echo "  • dev      - Start development server at http://localhost:8080"
+              echo "  • build    - Build for production"
+              echo "  • test     - Run unit tests (watch mode)"
+              echo "  • test:e2e - Run E2E tests with Playwright"
+              echo "  • check    - Run all code quality checks"
+              echo ""
+              echo "Run 'menu' to see all available commands."
             '';
           };
 

@@ -61,7 +61,7 @@ const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site);
     <meta name="geo.position" content="-38.6089;145.5913" />
     <meta name="ICBM" content="-38.6089, 145.5913" />
     
-    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}images/favicon.png`} />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

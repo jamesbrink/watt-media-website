@@ -4,8 +4,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://wattmedia.au',
-  // Removed conflicting base path - deploying to root domain
+  site: 'https://jamesbrink.github.io',
+  base: '/watt-media-website',
   integrations: [
     tailwind(),
     sitemap()
