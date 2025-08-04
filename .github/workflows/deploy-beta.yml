@@ -1,0 +1,78 @@
+# Deploy beta content to GitHub Pages at /beta path
+name: Deploy Beta to GitHub Pages
+
+on:
+  push:
+    branches: ["claude/issue-2-*", "astro-*", "beta-*"]  # Deploy beta branches
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy as beta'
+        required: true
+        default: 'claude/issue-2-20250804-0900'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-beta"
+  cancel-in-progress: false
+
+jobs:
+  build-beta:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build project for beta path
+        run: |
+          # Check if this is an Astro project
+          if [ -f "astro.config.mjs" ]; then
+            echo "Building Astro project for beta deployment"
+            # For Astro, configure base path
+            npm run build -- --base=/watt-media-website/beta/
+          else
+            echo "Building Vite project for beta deployment"
+            # For Vite, configure base path
+            npm run build -- --base=/watt-media-website/beta/
+          fi
+        env:
+          NODE_ENV: production
+          
+      - name: Create beta directory structure
+        run: |
+          mkdir -p beta-dist/beta
+          cp -r dist/* beta-dist/beta/
+          # Create a simple index.html that redirects to main site
+          cat > beta-dist/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Watt Media - Redirecting to Main Site</title>
+            <meta http-equiv="refresh" content="0; url=/watt-media-website/">
+          </head>
+          <body>
+            <p>Redirecting to main site...</p>
+          </body>
+          </html>
+          EOF
+          
+      - name: Upload beta artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: beta-build
+          path: './beta-dist'
+          retention-days: 30

@@ -1,0 +1,168 @@
+# Deploy both main site and beta to GitHub Pages
+name: Deploy Combined Site to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      deploy_beta:
+        description: 'Also deploy beta version'
+        type: boolean
+        default: true
+      beta_branch:
+        description: 'Beta branch to deploy'
+        required: false
+        default: 'claude/issue-2-20250804-0900'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-main:
+    runs-on: ubuntu-latest
+    outputs:
+      should-deploy-beta: ${{ github.event.inputs.deploy_beta == 'true' || github.event_name == 'push' }}
+      beta-branch: ${{ github.event.inputs.beta_branch || 'claude/issue-2-20250804-0900' }}
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build main site
+        run: npm run build
+        env:
+          NODE_ENV: production
+          
+      - name: Upload main artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-build
+          path: './dist'
+
+  build-beta:
+    runs-on: ubuntu-latest
+    needs: build-main
+    if: needs.build-main.outputs.should-deploy-beta == 'true'
+    steps:
+      - name: Checkout beta branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build-main.outputs.beta-branch }}
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build beta site
+        run: |
+          # Check if this is an Astro project
+          if [ -f "astro.config.mjs" ]; then
+            echo "Building Astro project for beta deployment"
+            npm run build -- --base=/watt-media-website/beta/
+          else
+            echo "Building Vite project for beta deployment"
+            npm run build -- --base=/watt-media-website/beta/
+          fi
+        env:
+          NODE_ENV: production
+          
+      - name: Upload beta artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: beta-build
+          path: './dist'
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-main, build-beta]
+    if: always() && needs.build-main.result == 'success'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download main artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: main-build
+          path: ./main-site
+          
+      - name: Download beta artifact (if available)
+        if: needs.build-beta.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: beta-build
+          path: ./beta-site
+          
+      - name: Combine sites
+        run: |
+          mkdir -p ./combined-site
+          # Copy main site to root
+          cp -r ./main-site/* ./combined-site/
+          
+          # Copy beta site to /beta subdirectory if available
+          if [ -d "./beta-site" ]; then
+            echo "Adding beta site to /beta path"
+            mkdir -p ./combined-site/beta
+            cp -r ./beta-site/* ./combined-site/beta/
+            
+            # Create a beta info page
+            cat > ./combined-site/beta-info.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Watt Media - Beta Version Available</title>
+            <style>
+              body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+              .info-box { background: #f0f9ff; border: 2px solid #0284c7; border-radius: 8px; padding: 20px; }
+              .button { display: inline-block; background: #ffee00; color: #374151; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+              .button:hover { background: #fef08a; }
+            </style>
+          </head>
+          <body>
+            <div class="info-box">
+              <h1>🚀 Beta Version Available</h1>
+              <p>We're testing a new version of the Watt Media website with improved technology and maintainability.</p>
+              <p><strong>Current Site:</strong> <a href="/watt-media-website/">View Main Site</a></p>
+              <p><strong>Beta Site:</strong> <a href="/watt-media-website/beta/" class="button">View Beta Site</a></p>
+              <p><em>Note: The beta version may contain experimental features and is subject to change.</em></p>
+            </div>
+          </body>
+          </html>
+          EOF
+          else
+            echo "No beta site available - deploying main site only"
+          fi
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        
+      - name: Upload combined artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './combined-site'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
