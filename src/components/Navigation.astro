@@ -1,0 +1,77 @@
+---
+export interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = "/" } = Astro.props;
+
+const navItems = [
+  { href: "/", label: "HOME" },
+  { href: "/about", label: "ABOUT" },
+  { href: "/portfolio", label: "PORTFOLIO" },
+  { href: "/services", label: "SERVICES" },
+  { href: "/testimonials", label: "TESTIMONIALS" },
+  { href: "/contact", label: "CONTACT" }
+];
+
+function isActive(href: string, currentPath: string): boolean {
+  if (href === "/" && currentPath === "/") return true;
+  if (href !== "/" && currentPath.startsWith(href)) return true;
+  return false;
+}
+---
+
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      <!-- Logo and Brand -->
+      <div class="flex items-center">
+        <a href="/" class="text-3xl font-bold font-quantico text-gray-800 hover:text-watt-yellow transition-colors duration-200">Watt Media</a>
+      </div>
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button
+          id="mobile-menu-button"
+          class="text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
+        >
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex space-x-1">
+        {navItems.map(({ href, label }) => (
+          <a 
+            href={href} 
+            class={`nav-link ${isActive(href, currentPath) ? 'active' : ''}`}
+          >
+            {label}
+          </a>
+        ))}
+      </div>
+    </div>
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="hidden md:hidden pb-4">
+      {navItems.map(({ href, label }) => (
+        <a
+          href={href}
+          class="block px-4 py-2 text-gray-800 hover:bg-watt-yellow hover:text-black font-semibold"
+        >
+          {label}
+        </a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<script>
+  document.getElementById("mobile-menu-button")?.addEventListener("click", function () {
+    document.getElementById("mobile-menu")?.classList.toggle("hidden");
+  });
+</script>

@@ -22,7 +22,7 @@
             nixpkgs-fmt.enable = true;
             prettier = {
               enable = true;
-              includes = [ "src/**/*.{html,css}" ];
+              includes = [ "src/**/*.{astro,html,css,js,ts}" ];
             };
           };
         };
@@ -77,7 +77,7 @@
             {
               name = "dev";
               category = "development";
-              help = "Start Vite development server with hot reload";
+              help = "Start Astro development server with hot reload";
               command = "npm install && npm run dev";
             }
             {
@@ -114,7 +114,7 @@
               name = "clean";
               category = "utility";
               help = "Clean node_modules and build artifacts";
-              command = "rm -rf node_modules dist .vite";
+              command = "rm -rf node_modules dist .astro";
             }
           ];
 

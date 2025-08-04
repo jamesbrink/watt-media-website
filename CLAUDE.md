@@ -8,19 +8,22 @@ Watt Media Website - A modern, responsive website for a graphic design and multi
 
 ## Tech Stack
 
-- **Build Tool**: Vite
-- **CSS Framework**: Tailwind CSS
+- **Framework**: Astro
+- **CSS Framework**: Tailwind CSS  
 - **Development**: Docker (primary) or Nix flakes
 
 ## File Structure
 
 ```
 src/                    # Source files
-├── css/               # Stylesheets
-│   └── main.css      # Tailwind CSS
-├── images/           # Image assets
-├── old/              # Legacy website (DO NOT MODIFY)
-└── *.html           # HTML pages (lowercase naming)
+├── components/        # Astro components
+├── layouts/          # Astro layouts
+├── pages/            # Astro pages (file-based routing)
+├── css/              # Stylesheets
+│   └── main.css     # Tailwind CSS
+├── images/          # Image assets
+├── old/             # Legacy website (DO NOT MODIFY)
+└── public/          # Static assets (robots.txt, sitemap.xml)
 ```
 
 ## Development Commands
@@ -34,7 +37,7 @@ docker compose down   # Stop server
 ### Nix Alternative
 ```bash
 nix develop          # Enter development shell
-dev                  # Start Vite dev server
+dev                  # Start Astro dev server
 build               # Build for production
 format              # Format all code
 check               # Run all linters
@@ -43,7 +46,7 @@ check               # Run all linters
 ## Important Notes
 
 - **DO NOT MODIFY** anything in the `src/old/` directory
-- All HTML files use lowercase naming convention
+- Astro uses file-based routing - pages in `src/pages/` become routes
 - Development server runs on port 8080
 - Hot reload is enabled in both Docker and Nix environments
 - Use professional "we" language, not first-person "I" statements

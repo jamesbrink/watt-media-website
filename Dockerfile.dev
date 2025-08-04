@@ -25,10 +25,9 @@ RUN npm install -g \
     stylelint-config-standard
 
 # Copy configuration files
-COPY vite.config.js ./
+COPY astro.config.mjs ./
 COPY tailwind.config.js ./
 COPY postcss.config.js ./
-COPY .stylelintrc.json ./
 
 # Expose port
 EXPOSE 8080
