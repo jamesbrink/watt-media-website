@@ -130,7 +130,11 @@ test.describe("Portfolio Lightbox", () => {
 
       const lightboxImage = lightbox.locator("img#lightbox-img");
       const actualImageSrc = await lightboxImage.getAttribute("src");
-      expect(actualImageSrc).toBe(expectedImagePath);
+      
+      // In production, the image src will have the base path prepended
+      // Check if the actual src ends with the expected path
+      expect(actualImageSrc).toBeTruthy();
+      expect(actualImageSrc?.endsWith(expectedImagePath!)).toBeTruthy();
 
       // Close lightbox for next iteration
       await page.keyboard.press("Escape");
