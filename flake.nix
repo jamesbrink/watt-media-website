@@ -22,7 +22,7 @@
             nixpkgs-fmt.enable = true;
             prettier = {
               enable = true;
-              includes = [ "src/**/*.{html,css}" ];
+              includes = [ "src/**/*.{astro,html,css,js,ts}" ];
             };
           };
         };
@@ -77,7 +77,7 @@
             {
               name = "dev";
               category = "development";
-              help = "Start Vite development server with hot reload";
+              help = "Start Astro development server with hot reload";
               command = "npm install && npm run dev";
             }
             {
@@ -105,16 +105,34 @@
               command = "stylelint 'src/**/*.css'";
             }
             {
+              name = "test";
+              category = "code quality";
+              help = "Run tests with Vitest";
+              command = "npm run test";
+            }
+            {
+              name = "lint-js";
+              category = "code quality";
+              help = "Run ESLint on JavaScript/TypeScript/Astro files";
+              command = "npm run lint";
+            }
+            {
+              name = "typecheck";
+              category = "code quality";
+              help = "Run TypeScript type checking";
+              command = "npm run typecheck";
+            }
+            {
               name = "check";
               category = "code quality";
               help = "Check formatting and run all linters";
-              command = "echo 'Checking formatting...' && treefmt --fail-on-change && echo '' && echo 'Running CSS linter...' && stylelint 'src/**/*.css'";
+              command = "echo 'Checking formatting...' && treefmt --fail-on-change && echo '' && echo 'Running CSS linter...' && stylelint 'src/**/*.css' && echo '' && echo 'Running ESLint...' && npm run lint && echo '' && echo 'Type checking...' && npm run typecheck";
             }
             {
               name = "clean";
               category = "utility";
               help = "Clean node_modules and build artifacts";
-              command = "rm -rf node_modules dist .vite";
+              command = "rm -rf node_modules dist .astro";
             }
           ];
 

@@ -16,7 +16,7 @@ RUN npm ci || npm install
 # Copy project files
 COPY . .
 
-# Expose port for Vite
+# Expose port for Astro
 EXPOSE 8080
 
 # Start development server
