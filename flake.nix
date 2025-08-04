@@ -22,8 +22,8 @@
             nixpkgs-fmt.enable = true;
             prettier = {
               enable = true;
-              includes = [ 
-                "src/**/*.{html,css,js,ts,jsx,tsx,json,md}" 
+              includes = [
+                "src/**/*.{html,css,js,ts,jsx,tsx,json,md}"
                 "*.{js,ts,json,md}"
                 "e2e/**/*.{js,ts}"
               ];
@@ -53,7 +53,7 @@
             nodePackages.vscode-langservers-extracted
             nodePackages.eslint
             nodePackages.prettier
-            
+
             # Astro support
             astro-language-server
 
@@ -121,19 +121,19 @@
               command = "npm run lint";
             }
             {
-              name = "test";
+              name = "run-tests";
               category = "code quality";
               help = "Run unit tests with Vitest (watch mode)";
               command = "npm run test";
             }
             {
-              name = "test:run";
+              name = "run-tests:once";
               category = "code quality";
               help = "Run unit tests once (CI mode)";
               command = "npm run test -- --run";
             }
             {
-              name = "test:e2e";
+              name = "run-tests:e2e";
               category = "code quality";
               help = "Run Playwright E2E tests";
               command = ''
@@ -143,7 +143,7 @@
               '';
             }
             {
-              name = "test:e2e:ui";
+              name = "run-tests:e2e:ui";
               category = "code quality";
               help = "Open Playwright test UI";
               command = "npm run test:e2e:ui";
@@ -211,11 +211,11 @@
               echo "✅ Environment ready!"
               echo ""
               echo "Available commands:"
-              echo "  • dev      - Start development server at http://localhost:8080"
-              echo "  • build    - Build for production"
-              echo "  • test     - Run unit tests (watch mode)"
-              echo "  • test:e2e - Run E2E tests with Playwright"
-              echo "  • check    - Run all code quality checks"
+              echo "  • dev           - Start development server at http://localhost:8080"
+              echo "  • build         - Build for production"
+              echo "  • run-tests     - Run unit tests (watch mode)"
+              echo "  • run-tests:e2e - Run E2E tests with Playwright"
+              echo "  • check         - Run all code quality checks"
               echo ""
               echo "Run 'menu' to see all available commands."
             '';

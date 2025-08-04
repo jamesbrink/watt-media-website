@@ -8,97 +8,168 @@ Watt Media Website - A modern, responsive website for a graphic design and multi
 
 ## Tech Stack
 
-- **Framework**: Astro 5.2.4
-- **CSS Framework**: Tailwind CSS 3.5.7
-- **Testing**: Vitest 2.2.7
-- **Type Checking**: TypeScript 5.7.2
+- **Framework**: Astro 4.16
+- **CSS Framework**: Tailwind CSS 3.5
+- **Testing**: Vitest (unit tests), Playwright (E2E tests)
+- **Type Checking**: TypeScript 5.7
 - **Linting**: ESLint with Astro plugin
 - **Development**: Docker (primary) or Nix flakes
+- **Package Manager**: npm
+- **Deployment**: GitHub Pages
 
-## File Structure
+## Project Structure
 
 ```
-src/                    # Source files
-├── components/        # Reusable Astro components
-├── layouts/          # Page layouts
-│   └── BaseLayout.astro
-├── pages/            # Astro pages (file-based routing)
-│   ├── index.astro
-│   ├── about.astro
-│   ├── services.astro
-│   ├── portfolio.astro
-│   ├── contact.astro
-│   ├── testimonials.astro
-│   └── [service pages].astro
-├── css/              # Stylesheets
-│   └── main.css     # Tailwind CSS imports
-├── test/             # Test files
-│   └── setup.js
-└── old/             # Legacy website (DO NOT MODIFY)
+.
+├── e2e/                        # Playwright end-to-end tests
+│   └── lightbox.spec.ts       # Portfolio lightbox tests
+├── public/                     # Static assets (served directly)
+│   ├── images/                # All website images
+│   │   ├── portfolio/         # Portfolio images organized by category
+│   │   │   ├── branding/      # Logo and brand identity work
+│   │   │   ├── creative-art/  # Creative artwork projects
+│   │   │   ├── marketing/     # Marketing campaign designs
+│   │   │   ├── packaging/     # Product packaging designs
+│   │   │   └── product-design/# Product design mockups
+│   │   └── *.svg/jpg/png      # Service images and branding assets
+│   ├── robots.txt             # SEO robots configuration
+│   ├── sitemap.xml            # XML sitemap for search engines
+│   └── llms.txt               # LLM-specific instructions
+├── src/                        # Source files
+│   ├── components/            # Reusable Astro components
+│   │   ├── ErrorBoundary.astro    # Error handling component
+│   │   ├── Footer.astro           # Site footer with social links
+│   │   ├── Image.astro            # Image component with base path handling
+│   │   └── Navigation.astro       # Main navigation menu
+│   ├── css/                   # Global stylesheets
+│   │   └── main.css           # Tailwind CSS directives and custom styles
+│   ├── layouts/               # Page layouts
+│   │   ├── BaseLayout.astro   # Base HTML structure with SEO
+│   │   └── MainLayout.astro   # Main site layout with nav/footer
+│   ├── pages/                 # File-based routing (routes match filenames)
+│   │   ├── index.astro        # Homepage
+│   │   ├── about.astro        # About page
+│   │   ├── services.astro     # Services overview
+│   │   ├── portfolio.astro    # Portfolio gallery with lightbox
+│   │   ├── contact.astro      # Contact form page
+│   │   ├── testimonials.astro # Client testimonials
+│   │   ├── audio-services.astro           # Audio production service
+│   │   ├── branding-identity.astro        # Branding service
+│   │   ├── print-marketing-design.astro   # Print design service
+│   │   ├── social-media-design.astro      # Social media service
+│   │   └── visual-content-creation.astro  # Visual content service
+│   ├── test/                  # Unit tests
+│   │   ├── components/        # Component tests
+│   │   ├── astro.test.js      # Astro configuration tests
+│   │   ├── images.test.js     # Image integrity tests
+│   │   └── setup.js           # Test configuration
+│   └── env.d.ts               # TypeScript environment types
+├── Configuration Files
+│   ├── astro.config.mjs       # Astro configuration (site, base, integrations)
+│   ├── tailwind.config.js     # Tailwind CSS configuration
+│   ├── postcss.config.js      # PostCSS configuration
+│   ├── vitest.config.js       # Vitest test runner configuration
+│   ├── playwright.config.ts   # Playwright E2E test configuration
+│   ├── tsconfig.json          # TypeScript configuration
+│   ├── .eslintrc.cjs          # ESLint linting rules
+│   ├── .prettierrc.json       # Prettier code formatting
+│   └── .stylelintrc.json      # Stylelint CSS linting
+├── Docker Files
+│   ├── docker-compose.yml     # Docker Compose for development
+│   ├── Dockerfile             # Production Docker image
+│   └── Dockerfile.dev         # Development Docker image with hot reload
+├── Nix Files
+│   ├── flake.nix              # Nix flake configuration
+│   └── flake.lock             # Nix flake lock file
+└── GitHub Actions
+    └── .github/workflows/
+        ├── ci-cd.yml          # CI/CD pipeline with tests
+        ├── claude.yml         # Claude Code integration
+        └── claude-code-review.yml # Claude code review
 
-public/                # Static assets (served as-is)
-├── images/           # All images
-│   └── portfolio/   # Portfolio images by category
-├── robots.txt       # SEO configuration
-├── sitemap.xml      # Sitemap for search engines
-└── llms.txt         # Instructions for LLMs
 ```
 
 ## Development Commands
 
 ### Docker (Recommended)
+
 ```bash
 docker compose up     # Start dev server on http://localhost:8080
 docker compose down   # Stop server
 ```
 
 ### Nix Alternative
+
 ```bash
 nix develop          # Enter development shell
 dev                  # Start Astro dev server
-build               # Build for production
-test                 # Run tests with Vitest
-lint                # Run ESLint on JS/TS/Astro files
+build                # Build for production
+run-tests            # Run unit tests with Vitest (watch mode)
+run-tests:once       # Run unit tests once (CI mode)
+run-tests:e2e        # Run Playwright E2E tests
+lint                 # Run ESLint on JS/TS/Astro files
 typecheck            # Run TypeScript type checking
+format               # Format all code with treefmt
+check                # Run all linters and tests
 ```
 
 ### NPM Scripts
+
 ```bash
 npm run dev          # Start development server
 npm run build        # Build for production
-npm run test         # Run tests
+npm run preview      # Preview production build
+npm run test         # Run tests with Vitest
+npm run test:e2e     # Run Playwright E2E tests
 npm run lint         # Run ESLint
 npm run typecheck    # TypeScript type checking
 ```
 
 ## Important Notes
 
-- **DO NOT MODIFY** anything in the `src/old/` directory
 - **DO NOT READ** image files directly - use `file` command to check their type
 - Astro uses file-based routing - pages in `src/pages/` become routes
-- All static assets must be in `public/` directory
+- All static assets must be in `public/` directory (not `src/`)
 - Development server runs on port 8080
 - Hot reload is enabled in both Docker and Nix environments
 - Use professional "we" language, not first-person "I" statements
 - Maintain consistent color scheme with good contrast for accessibility
 - Run `npm run lint` and `npm run typecheck` before committing
+- The Image component handles base path for both dev and production environments
 
 ## Design Standards
 
 ### Colors
+
 - Primary brand color: `watt-yellow` (#ffee00)
 - Text on light backgrounds: `text-gray-800` (not yellow)
 - Success indicators (checkboxes): `text-green-600`
 - Hover states: Yellow accents on dark backgrounds only
 
 ### Social Media
+
 - Facebook: https://www.facebook.com/wattmediaau
 - Instagram: @watt_media_au (https://www.instagram.com/watt_media_au)
 - Links appear in footer with hover effects
 
 ### Services Structure
+
 Each service page follows a consistent pattern:
+
 - Hero section with service name
 - Detailed service descriptions with pricing
 - Related services section
 - Call-to-action sections
+
+## Base Path Configuration
+
+The site uses conditional base paths:
+
+- Development: `/` (no base path)
+- Production: `/watt-media-website` (for GitHub Pages)
+
+This is handled automatically in:
+
+- `astro.config.mjs` - Site and base configuration
+- `src/components/Image.astro` - Image path handling
+- Portfolio lightbox JavaScript - Dynamic path resolution

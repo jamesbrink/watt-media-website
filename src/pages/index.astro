@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import Image from '../components/Image.astro';
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -130,7 +131,7 @@ const structuredData = {
         </div>
         <div class="flex justify-center md:justify-end">
           <div class="bg-white p-8 rounded-2xl shadow-2xl">
-            <img
+            <Image
               src="/images/watt-media-logo.png"
               alt="Watt Media Logo"
               class="w-64 h-64 object-contain"
