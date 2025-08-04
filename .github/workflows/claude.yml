@@ -52,4 +52,3 @@ token: ${{ secrets.GITHUB_TOKEN }}
         packages: write
         pull-requests: write
         statuses: write
-```
