@@ -20,12 +20,9 @@ jobs:
     
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-      issues: write
-      actions: write
-      checks: write
-      statuses: write
+      contents: read
+      pull-requests: read
+      issues: read
       id-token: write
     
     steps:
@@ -78,3 +75,4 @@ jobs:
           # if: |
           #   !contains(github.event.pull_request.title, '[skip-review]') &&
           #   !contains(github.event.pull_request.title, '[WIP]')
+
