@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Electrolize&family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple Theme</title>
+    <link href="css/multiColumnTemplate.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Lightbox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the lightbox */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .lightbox-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3); /* shadow-lg */
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 0.5rem;
+            border-radius: 9999px; /* rounded-full */
+            transition: background-color 0.2s ease;
+        }
+
+        .lightbox-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal p-4">
+    <div class="container">
+        <header>
+            <div class="primary_header">
+                <h1 class="title"> Watt Media</h1>
+            </div>
+            <nav class="secondary_header" id="menu">
+                <ul>
+                      <li><a href="index.html">HOME</a></li>
+		<li><a href="About.html">ABOUT</a></li>
+        <li><a href="Services.html">SERVICES&nbsp;</a></li>
+        <li><a href="Portfolio.html">PORTFOLIO</a></li>
+        <li><a href="Testimonials.html">TESTIMONIALS&nbsp;</a></li>
+        <li><a href="Contact.html">CONTACT&nbsp;</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="container mx-auto p-6 bg-white shadow-lg rounded-xl mt-8">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Bauhaus-Coffee-Lightbox.jpg')">
+                    <img src="images/Bauhaus-Coffee.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Blank-Lightbox.jpg')">
+                    <img src="images/Blank.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Christmas-Boiled-Lollies-Lightbox.jpg')">
+                    <img src="images/Christmas-Boiled-Lollies.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Firefighters-Museum-Lightbox.jpg')">
+                    <img src="images/Firefighter-Museum.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Ghetto-Blaster-Lightbox.jpg')">
+                    <img src="images/Ghetto-Blaster.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Helicopter-Lightbox.jpg')">
+                    <img src="images/Helicopter.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/HESA-Lightbox.jpg')">
+                    <img src="images/HESA.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/iPhone-4-Lightbox.jpg')">
+                <img src="images/iPhone-4.jpg" width="300" height="400" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+                
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/North-Eastern-Hotel-Lightbox.jpg')">
+                    <img src="images/North-Eastern-Hotel.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Obama-Style-Poster-Lightbox.jpg')">
+                    <img src="images/Obama-Style-Poster.jpg" width="300" height="400" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Scream-Self-Portrait-Lightbox.jpg')">
+                    <img src="images/Scream-Self-Portrait.jpg" width="300" height="400" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Truck-Lightbox.jpg')">
+                    <img src="images/Truck.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Wine-Bottles-Lightbox.jpg')">
+                    <img src="images/Wine-Bottles.jpg" width="300" height="400" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div> </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Xbox-Controller-Lightbox.jpg')">
+                   <img src="images/Xbox-Controller.jpg" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Devils-Mountain-Goats-Lightbox.png')">
+                   <img src="images/Devils-Mountain-Goats.png" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="openLightbox('images/Late-Night-Choc-Lightbox.png')">
+                   <img src="images/Late-Night-Choc.png" width="400" height="300" alt=""/>
+<div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl">
+            <span class="text-white text-lg font-semibold">View</span>
+          </div>
+                </div>
+          </div>
+        </div>
+    </div>
+
+    <div id="lightbox-overlay" class="lightbox-overlay" onclick="closeLightbox()">
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <img id="lightbox-image" src="" alt="Lightbox Image">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        </div>
+    </div>
+
+    <script>
+        function openLightbox(imageUrl) {
+            const lightboxOverlay = document.getElementById('lightbox-overlay');
+            const lightboxImage = document.getElementById('lightbox-image');
+            lightboxImage.src = imageUrl;
+            lightboxOverlay.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const lightboxOverlay = document.getElementById('lightbox-overlay');
+            lightboxOverlay.classList.remove('active');
+        }
+
+        // Close lightbox if escape key is pressed
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

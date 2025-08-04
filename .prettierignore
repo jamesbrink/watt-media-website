@@ -1,0 +1,6 @@
+src/old/
+node_modules/
+dist/
+.git/
+*.lock
+package-lock.json

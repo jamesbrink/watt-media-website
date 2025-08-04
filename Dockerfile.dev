@@ -1,0 +1,40 @@
+# Development Dockerfile with hot reloading support
+FROM node:20-alpine
+
+# Install development tools and dependencies for better compatibility
+RUN apk add --no-cache \
+    git \
+    python3 \
+    make \
+    g++ \
+    bash
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY package*.json ./
+
+# Install dependencies (including devDependencies)
+RUN npm install
+
+# Install global tools for formatting
+RUN npm install -g \
+    prettier \
+    stylelint \
+    stylelint-config-standard
+
+# Copy configuration files
+COPY vite.config.js ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
+COPY .stylelintrc.json ./
+
+# Expose port
+EXPOSE 8080
+
+# Use polling for file watching in Docker
+ENV CHOKIDAR_USEPOLLING=true
+
+# Start development server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "8080"]
