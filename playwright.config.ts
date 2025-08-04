@@ -18,7 +18,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.CI ? "http://localhost:4321/watt-media-website" : "http://localhost:4321",
+    baseURL: process.env.CI ? "http://localhost:8080/watt-media-website" : "http://localhost:4321",
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     /* Take screenshot on failure */
@@ -58,7 +58,7 @@ export default defineConfig({
     command: process.env.CI 
       ? "NODE_ENV=production npm run preview"
       : "npm run build && npm run preview",
-    url: process.env.CI ? "http://localhost:4321/watt-media-website" : "http://localhost:4321",
+    url: process.env.CI ? "http://localhost:8080/watt-media-website" : "http://localhost:4321",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
     stdout: "pipe",
