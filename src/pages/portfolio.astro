@@ -751,7 +751,9 @@ import Image from '../components/Image.astro';
       
       if (lightboxImg) {
         // Add base URL to image src if it starts with /
-        const fullImageSrc = imageSrc.startsWith('/') ? BASE_URL + imageSrc.slice(1) : imageSrc;
+        const fullImageSrc = imageSrc.startsWith('/') 
+          ? (BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL) + imageSrc
+          : imageSrc;
         lightboxImg.src = fullImageSrc;
       }
       
