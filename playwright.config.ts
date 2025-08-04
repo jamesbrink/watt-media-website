@@ -60,6 +60,8 @@ export default defineConfig({
       : "npm run build && npm run preview",
     url: process.env.CI ? "http://localhost:4321/watt-media-website" : "http://localhost:4321",
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000
+    timeout: 120 * 1000,
+    stdout: "pipe",
+    stderr: "pipe"
   }
 });
