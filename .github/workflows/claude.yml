@@ -40,11 +40,22 @@ jobs:
       issues: write
       id-token: write # Required for GitHub OIDC token authentication
       actions: read # Required for Claude to read CI results on PRs
+      checks: write # Allow Claude to create check runs
+      statuses: write # Allow Claude to update commit statuses
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0  # Full history for better context
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run Claude Code
         id: claude
@@ -52,9 +63,11 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # This is an optional setting that allows Claude to read CI results on PRs
+          # This is required for full Bash access and CI integration
           additional_permissions: |
             actions: read
+            checks: write
+            statuses: write
           
           # Specify model - using Claude Opus 4 for maximum capability
           model: "claude-opus-4-20250514"
@@ -78,10 +91,11 @@ jobs:
             Use professional "we" language, not first-person "I" statements
             Follow the design standards for colors and styling specified in CLAUDE.md
             
-            Error Handling:
-            - If dependencies are not installed, run 'npm install' first
-            - Check for missing dependencies before running tests or builds
-            - Provide clear error messages and recovery steps
+            Environment:
+            - Node.js 20 is installed
+            - Dependencies are already installed via npm ci
+            - Working directory is the repository root
+            - You can run any npm scripts defined in package.json
           
           # Optional: Custom environment variables for Claude
           # claude_env: |
