@@ -20,10 +20,11 @@ jobs:
     
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: read
-      issues: read
+      contents: write
+      pull-requests: write
+      issues: write
       id-token: write
+      actions: read # Required for Claude to read CI results
     
     steps:
       - name: Checkout repository
@@ -42,12 +43,21 @@ jobs:
           
           # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
+            Please review this pull request following the project standards in CLAUDE.md.
+            
+            Provide feedback on:
+            - Code quality and adherence to Astro framework conventions
+            - Proper use of Tailwind CSS for styling
+            - TypeScript type safety where applicable
             - Potential bugs or issues
             - Performance considerations
             - Security concerns
             - Test coverage
+            
+            Run the following checks if applicable:
+            - npm run lint
+            - npm run typecheck
+            - npm run test
             
             Be constructive and helpful in your feedback.
 
@@ -68,8 +78,8 @@ jobs:
           #   'Welcome! Please review this PR from a first-time contributor. Be encouraging and provide detailed explanations for any suggestions.' ||
           #   'Please provide a thorough code review focusing on our coding standards and best practices.' }}
           
-          # Optional: Add specific tools for running tests or linting
-          # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck)"
+          # Allow Claude to run tests and linting during review
+          allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck),Bash(npm run check),Read,Grep,Glob"
           
           # Optional: Skip review for certain conditions
           # if: |
