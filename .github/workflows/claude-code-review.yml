@@ -1,5 +1,22 @@
 name: Claude Code Review
 
+# This workflow automatically reviews PRs using Claude Opus 4 for maximum insight
+# Claude performs comprehensive code analysis with full repository access
+#
+# Permissions explained:
+# - contents: write - Allows Claude to suggest file changes if needed
+# - pull-requests: write - Enables Claude to comment with review feedback
+# - issues: write - Allows Claude to create related issues if critical problems found
+# - id-token: write - Required for OIDC authentication with the Claude Code Action  
+# - actions: read - Enables Claude to analyze CI test results
+#
+# Full tool access ensures Claude can:
+# - Install dependencies if needed (npm install)
+# - Run all test suites and linting
+# - Analyze code with any available tools
+# - Fetch relevant documentation
+# - Make direct code suggestions
+
 on:
   pull_request:
     types: [opened, synchronize]
@@ -23,7 +40,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
+      id-token: write # Required for GitHub OIDC token authentication
       actions: read # Required for Claude to read CI results
     
     steps:
@@ -38,8 +55,8 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
-          # model: "claude-opus-4-20250514"
+          # Specify model - using Claude Opus 4 for maximum capability
+          model: "claude-opus-4-20250514"
           
           # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
@@ -55,9 +72,15 @@ jobs:
             - Test coverage
             
             Run the following checks if applicable:
+            - npm install (if dependencies are missing)
             - npm run lint
             - npm run typecheck
             - npm run test
+            
+            Error Handling:
+            - Check if node_modules exists before running commands
+            - If any command fails due to missing dependencies, run npm install first
+            - Provide clear explanations for any errors encountered
             
             Be constructive and helpful in your feedback.
 
@@ -78,8 +101,8 @@ jobs:
           #   'Welcome! Please review this PR from a first-time contributor. Be encouraging and provide detailed explanations for any suggestions.' ||
           #   'Please provide a thorough code review focusing on our coding standards and best practices.' }}
           
-          # Allow Claude to run tests and linting during review
-          allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck),Bash(npm run check),Read,Grep,Glob"
+          # Allow Claude full access to run all necessary commands during review
+          allowed_tools: "Bash(*),Read,Grep,Glob,LS,WebFetch,WebSearch,TodoWrite,Edit,MultiEdit,Write"
           
           # Optional: Skip review for certain conditions
           # if: |

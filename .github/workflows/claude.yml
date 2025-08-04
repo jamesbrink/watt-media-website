@@ -1,5 +1,21 @@
 name: Claude Code
 
+# This workflow enables Claude Opus 4 to assist with development tasks via GitHub comments
+# Claude has full access to run commands, edit files, and interact with the codebase
+# 
+# Permissions explained:
+# - contents: write - Allows Claude to create/edit files and push commits
+# - pull-requests: write - Enables Claude to comment on and modify PRs
+# - issues: write - Allows Claude to comment on and update issues
+# - id-token: write - Required for OIDC authentication with the Claude Code Action
+# - actions: read - Enables Claude to read CI/CD results and logs
+#
+# Tools access:
+# - Bash(*) - Full command line access for any development tasks
+# - File manipulation tools - Complete read/write access to codebase
+# - Search tools - Can search and analyze the entire repository
+# - Web tools - Can fetch documentation and search for solutions
+
 on:
   issue_comment:
     types: [created]
@@ -22,7 +38,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
+      id-token: write # Required for GitHub OIDC token authentication
       actions: read # Required for Claude to read CI results on PRs
     steps:
       - name: Checkout repository
@@ -40,8 +56,8 @@ jobs:
           additional_permissions: |
             actions: read
           
-          # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
-          # model: "claude-opus-4-20250514"
+          # Specify model - using Claude Opus 4 for maximum capability
+          model: "claude-opus-4-20250514"
           
           # Optional: Customize the trigger phrase (default: @claude)
           # trigger_phrase: "/claude"
@@ -49,8 +65,8 @@ jobs:
           # Optional: Trigger when specific user is assigned to an issue
           # assignee_trigger: "claude-bot"
           
-          # Allow Claude to run commands for development and testing
-          allowed_tools: "Bash(npm install),Bash(npm run build),Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck),Bash(npm run format),Bash(npm run check),Bash(npm run dev),Edit,MultiEdit,Write,Read"
+          # Allow Claude to run all development, testing, and code manipulation commands
+          allowed_tools: "Bash(*),Edit,MultiEdit,Write,Read,Grep,Glob,LS,WebFetch,WebSearch,TodoWrite"
           
           # Custom instructions for Claude to follow project standards
           custom_instructions: |
@@ -61,6 +77,11 @@ jobs:
             Run lint and typecheck before suggesting changes
             Use professional "we" language, not first-person "I" statements
             Follow the design standards for colors and styling specified in CLAUDE.md
+            
+            Error Handling:
+            - If dependencies are not installed, run 'npm install' first
+            - Check for missing dependencies before running tests or builds
+            - Provide clear error messages and recovery steps
           
           # Optional: Custom environment variables for Claude
           # claude_env: |
