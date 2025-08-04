@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://wattmedia.au',
-  base: '/watt-media-website/',
+  // Removed conflicting base path - deploying to root domain
   integrations: [
     tailwind(),
     sitemap()
@@ -17,5 +17,10 @@ export default defineConfig({
   build: {
     assets: 'assets'
   },
-  publicDir: 'src/public'
+  publicDir: 'src/public',
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp'
+    }
+  }
 });

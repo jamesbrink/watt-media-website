@@ -39,8 +39,20 @@ docker compose down   # Stop server
 nix develop          # Enter development shell
 dev                  # Start Astro dev server
 build               # Build for production
-format              # Format all code
-check               # Run all linters
+test                 # Run tests with Vitest
+lint-js              # Run ESLint on JS/TS/Astro files
+typecheck            # Run TypeScript type checking
+format               # Format all code
+check                # Run all linters and type checking
+```
+
+### NPM Scripts
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run test         # Run tests
+npm run lint         # Run ESLint
+npm run typecheck    # TypeScript type checking
 ```
 
 ## Important Notes
