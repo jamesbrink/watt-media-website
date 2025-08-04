@@ -49,6 +49,9 @@
             nodePackages.vscode-langservers-extracted
             nodePackages.eslint
             nodePackages.prettier
+            
+            # Astro support
+            astro-language-server
 
             # CSS tools
             nodePackages.stylelint
@@ -101,20 +104,14 @@
             {
               name = "lint";
               category = "code quality";
-              help = "Run CSS linter";
-              command = "stylelint 'src/**/*.css'";
+              help = "Run ESLint on JavaScript/TypeScript/Astro files";
+              command = "npm run lint";
             }
             {
               name = "test";
               category = "code quality";
               help = "Run tests with Vitest";
               command = "npm run test";
-            }
-            {
-              name = "lint-js";
-              category = "code quality";
-              help = "Run ESLint on JavaScript/TypeScript/Astro files";
-              command = "npm run lint";
             }
             {
               name = "typecheck";
@@ -126,7 +123,7 @@
               name = "check";
               category = "code quality";
               help = "Check formatting and run all linters";
-              command = "echo 'Checking formatting...' && treefmt --fail-on-change && echo '' && echo 'Running CSS linter...' && stylelint 'src/**/*.css' && echo '' && echo 'Running ESLint...' && npm run lint && echo '' && echo 'Type checking...' && npm run typecheck";
+              command = "echo 'Checking formatting...' && treefmt --fail-on-change && echo '' && echo 'Running ESLint...' && npm run lint && echo '' && echo 'Type checking...' && npm run typecheck";
             }
             {
               name = "clean";

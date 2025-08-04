@@ -10,6 +10,7 @@ A modern, responsive website for wattmedia.au - graphic design and multimedia se
 - Social media integration (Facebook and Instagram)
 - Accessible and SEO-friendly markup
 - Fast loading with optimized assets
+- Built with Astro for optimal performance
 
 ## 🚀 Quick Start with Docker
 
@@ -70,11 +71,12 @@ dev
 # The website will be available at http://localhost:8080
 ```
 
-### Useful Nix Commands
-- `dev` - Start the development server with hot reload
+### Useful Commands
+- `dev` - Start the Astro development server with hot reload
 - `build` - Build the website for production
-- `format` - Auto-format all code files
-- `check` - Run linters to check code quality
+- `test` - Run the test suite
+- `lint` - Check code quality with ESLint
+- `typecheck` - Run TypeScript type checking
 - `exit` - Leave the Nix development environment
 
 ## 📁 Project Structure
@@ -82,35 +84,46 @@ dev
 ```
 watt-media-website/
 ├── src/                      # All website source files
-│   ├── index.html           # Homepage
-│   ├── about.html           # About page
-│   ├── services.html        # Services overview
-│   ├── portfolio.html       # Portfolio showcase
-│   ├── contact.html         # Contact information
-│   ├── testimonials.html    # Client testimonials
-│   │
-│   ├── audio-services.html  # Service pages
-│   ├── branding-identity.html
-│   ├── print-marketing-design.html
-│   ├── social-media-design.html
-│   ├── visual-content-creation.html
+│   ├── components/          # Reusable Astro components
+│   ├── layouts/            # Page layouts
+│   │   └── BaseLayout.astro
+│   ├── pages/              # Astro pages (file-based routing)
+│   │   ├── index.astro     # Homepage
+│   │   ├── about.astro     # About page
+│   │   ├── services.astro  # Services overview
+│   │   ├── portfolio.astro # Portfolio showcase
+│   │   ├── contact.astro   # Contact information
+│   │   ├── testimonials.astro # Client testimonials
+│   │   │
+│   │   ├── audio-services.astro  # Service pages
+│   │   ├── branding-identity.astro
+│   │   ├── print-marketing-design.astro
+│   │   ├── social-media-design.astro
+│   │   └── visual-content-creation.astro
 │   │
 │   ├── css/                 # Stylesheets
-│   │   └── main.css        # Tailwind CSS configuration
+│   │   └── main.css        # Tailwind CSS imports
 │   │
+│   └── old/                # Legacy website (DO NOT MODIFY)
+│
+├── public/                  # Static assets (served as-is)
 │   ├── images/             # All images and graphics
+│   │   ├── portfolio/      # Portfolio images by category
 │   │   ├── *.svg          # Vector graphics for services
 │   │   ├── *.png          # Logo and other images
 │   │   └── favicon.png    # Browser tab icon
-│   │
-│   └── old/               # Legacy website (DO NOT MODIFY)
+│   ├── robots.txt         # SEO configuration
+│   └── sitemap.xml        # Site structure for search engines
 │
 ├── docker-compose.yml      # Docker configuration
-├── Dockerfile             # Docker image setup
+├── Dockerfile.dev         # Docker development image
 ├── flake.nix             # Nix configuration
 ├── package.json          # Node.js dependencies
+├── astro.config.mjs      # Astro configuration
 ├── tailwind.config.js    # Tailwind CSS settings
-├── vite.config.js        # Vite build tool settings
+├── tsconfig.json         # TypeScript configuration
+├── vitest.config.js      # Test runner configuration
+├── CLAUDE.md            # Instructions for Claude Code
 └── README.md            # This file
 ```
 
@@ -150,19 +163,19 @@ The website showcases the following services:
 
 ## 🛠️ Technologies Used
 
-- **[Vite](https://vitejs.dev/)** - Fast build tool and development server
+- **[Astro](https://astro.build/)** - Modern static site generator
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[Docker](https://www.docker.com/)** - Containerization for consistent development
 - **[Nix](https://nixos.org/)** - Reproducible development environments
-- **HTML5** - Modern, semantic markup
-- **SVG** - Scalable vector graphics for icons
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Vitest](https://vitest.dev/)** - Fast unit testing framework
 
 ## 📝 Making Changes
 
 ### Editing Content
 
-1. All website pages are in the `src/` folder
-2. Open any `.html` file in a text editor
+1. All website pages are in the `src/pages/` folder
+2. Open any `.astro` file in a text editor
 3. Make your changes
 4. Save the file
 5. The browser will automatically refresh to show your changes
@@ -170,7 +183,7 @@ The website showcases the following services:
 ### Common Edits
 
 **Changing Text:**
-```html
+```astro
 <!-- Find text like this -->
 <p>Old text here</p>
 
@@ -179,7 +192,7 @@ The website showcases the following services:
 ```
 
 **Updating Prices:**
-```html
+```astro
 <!-- Look for price text -->
 <span class="text-xl font-bold text-gray-800">$100 AUD</span>
 
@@ -188,18 +201,30 @@ The website showcases the following services:
 ```
 
 **Changing Images:**
-1. Add your new image to `src/images/`
-2. Update the image path in the HTML:
-```html
-<img src="images/your-new-image.png" alt="Description of image">
+1. Add your new image to `public/images/`
+2. Update the image path in the Astro file:
+```astro
+<img src="/images/your-new-image.png" alt="Description of image">
 ```
 
 ### Important Guidelines
 
 - ✅ Use "we" instead of "I" in all text
-- ✅ Keep file names lowercase (e.g., `about.html` not `About.html`)
+- ✅ Keep file names lowercase (e.g., `about.astro` not `About.astro`)
 - ❌ Never modify files in `src/old/` directory
 - ✅ Test all changes in your browser before deploying
+- ✅ Run `npm run lint` and `npm run typecheck` before committing
+
+## 🧪 Testing
+
+Run the test suite:
+```bash
+# With Docker
+docker compose run --rm web npm test
+
+# With Nix
+nix develop -c npm test
+```
 
 ## 🏗️ Building for Production
 
@@ -207,12 +232,12 @@ When you're ready to publish the website:
 
 ### With Docker
 ```bash
-docker compose run --rm app npm run build
+docker compose run --rm web npm run build
 ```
 
 ### With Nix
 ```bash
-nix develop -c build
+nix develop -c npm run build
 ```
 
 The built website will be in the `dist/` folder, ready to upload to your web hosting.
@@ -225,7 +250,8 @@ This repository is configured for automatic deployment to GitHub Pages. Every pu
 
 The site uses GitHub Actions for CI/CD:
 - **Automatic builds** on every push to main
-- **Static site generation** using Vite
+- **Static site generation** using Astro
+- **Automatic sitemap generation** for SEO
 - **Free SSL certificate** included by default
 - **Available at**: `https://jamesbrink.github.io/watt-media-website/`
 
@@ -234,8 +260,8 @@ The site uses GitHub Actions for CI/CD:
 To use a custom domain (e.g., wattmedia.au):
 
 1. **In your repository**:
-   - Create a file `src/CNAME` with your domain: `wattmedia.au`
-   - Update `vite.config.js`: change `base: '/watt-media-website/'` to `base: '/'`
+   - Create a file `public/CNAME` with your domain: `wattmedia.au`
+   - Update `astro.config.mjs`: change `site` and `base` values
 
 2. **In GitHub**:
    - Go to Settings → Pages
@@ -261,8 +287,7 @@ To use a custom domain (e.g., wattmedia.au):
 
 - [GitHub Pages Documentation](https://docs.github.com/en/pages)
 - [Custom Domain Setup Guide](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)
-- [DNS Configuration Help](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site)
-- [Troubleshooting Custom Domains](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/troubleshooting-custom-domains-and-github-pages)
+- [Astro Deployment Guide](https://docs.astro.build/en/guides/deploy/github/)
 
 ### Deployment Status
 
@@ -284,13 +309,13 @@ These appear in the footer of every page.
 ### "Port 8080 is already in use"
 Another program is using port 8080. Either:
 1. Stop the other program, or
-2. Change the port in `vite.config.js` and `docker-compose.yml`
+2. Change the port in `docker-compose.yml` and run commands
 
 ### "Cannot find module"
 Run these commands:
 ```bash
 # With Docker
-docker compose run --rm app npm install
+docker compose run --rm web npm install
 
 # With Nix
 nix develop -c npm install
@@ -305,10 +330,16 @@ nix develop -c npm install
 1. Make sure Docker Desktop is running
 2. Try: `docker compose down` then `docker compose up --build`
 
+### TypeScript errors
+Run type checking to see detailed errors:
+```bash
+npm run typecheck
+```
+
 ## 📞 Support
 
 For technical issues with the website, consult:
-- [Vite Documentation](https://vitejs.dev/guide/)
+- [Astro Documentation](https://docs.astro.build/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Docker Documentation](https://docs.docker.com/)
 - [Nix Documentation](https://nixos.org/learn.html)
