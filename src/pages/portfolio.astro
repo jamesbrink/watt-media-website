@@ -703,12 +703,20 @@ import MainLayout from '../layouts/MainLayout.astro';
 
   <!-- Scripts -->
   <script>
+    // Declare global functions on window
+    declare global {
+      interface Window {
+        openLightbox: (imageSrc: string) => void;
+        closeLightbox: () => void;
+      }
+    }
+
     // Category filtering
     const filterButtons = document.querySelectorAll('.filter-btn');
     const portfolioItems = document.querySelectorAll('.portfolio-item');
     
     filterButtons.forEach(button => {
-      button.addEventListener('click', function() {
+      button.addEventListener('click', function(this: HTMLElement) {
         const filter = this.getAttribute('data-filter');
         
         // Update active button
@@ -726,24 +734,36 @@ import MainLayout from '../layouts/MainLayout.astro';
       });
     });
 
-    // Lightbox functions
-    function openLightbox(imageSrc) {
-      document.getElementById("lightbox").style.display = "flex";
-      document.getElementById("lightbox").style.alignItems = "center";
-      document.getElementById("lightbox").style.justifyContent = "center";
-      document.getElementById("lightbox-img").src = imageSrc;
+    // Lightbox functions - made global for onclick handlers
+    window.openLightbox = function(imageSrc: string) {
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement | null;
+      
+      if (lightbox) {
+        lightbox.style.display = "flex";
+        lightbox.style.alignItems = "center";
+        lightbox.style.justifyContent = "center";
+      }
+      
+      if (lightboxImg) {
+        lightboxImg.src = imageSrc;
+      }
+      
       document.body.style.overflow = "hidden";
     }
 
-    function closeLightbox() {
-      document.getElementById("lightbox").style.display = "none";
+    window.closeLightbox = function() {
+      const lightbox = document.getElementById("lightbox");
+      if (lightbox) {
+        lightbox.style.display = "none";
+      }
       document.body.style.overflow = "auto";
     }
 
     // Close lightbox with escape key
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") {
-        closeLightbox();
+        window.closeLightbox();
       }
     });
   </script>

@@ -41,6 +41,7 @@ out/
 .parcel-cache/
 .vite/
 .temp/
+.astro/
 
 # Temporary files
 *.tmp

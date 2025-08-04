@@ -8,22 +8,40 @@ Watt Media Website - A modern, responsive website for a graphic design and multi
 
 ## Tech Stack
 
-- **Framework**: Astro
-- **CSS Framework**: Tailwind CSS  
+- **Framework**: Astro 5.2.4
+- **CSS Framework**: Tailwind CSS 3.5.7
+- **Testing**: Vitest 2.2.7
+- **Type Checking**: TypeScript 5.7.2
+- **Linting**: ESLint with Astro plugin
 - **Development**: Docker (primary) or Nix flakes
 
 ## File Structure
 
 ```
 src/                    # Source files
-├── components/        # Astro components
-├── layouts/          # Astro layouts
+├── components/        # Reusable Astro components
+├── layouts/          # Page layouts
+│   └── BaseLayout.astro
 ├── pages/            # Astro pages (file-based routing)
+│   ├── index.astro
+│   ├── about.astro
+│   ├── services.astro
+│   ├── portfolio.astro
+│   ├── contact.astro
+│   ├── testimonials.astro
+│   └── [service pages].astro
 ├── css/              # Stylesheets
-│   └── main.css     # Tailwind CSS
-├── images/          # Image assets
-├── old/             # Legacy website (DO NOT MODIFY)
-└── public/          # Static assets (robots.txt, sitemap.xml)
+│   └── main.css     # Tailwind CSS imports
+├── test/             # Test files
+│   └── setup.js
+└── old/             # Legacy website (DO NOT MODIFY)
+
+public/                # Static assets (served as-is)
+├── images/           # All images
+│   └── portfolio/   # Portfolio images by category
+├── robots.txt       # SEO configuration
+├── sitemap.xml      # Sitemap for search engines
+└── llms.txt         # Instructions for LLMs
 ```
 
 ## Development Commands
@@ -40,10 +58,8 @@ nix develop          # Enter development shell
 dev                  # Start Astro dev server
 build               # Build for production
 test                 # Run tests with Vitest
-lint-js              # Run ESLint on JS/TS/Astro files
+lint                # Run ESLint on JS/TS/Astro files
 typecheck            # Run TypeScript type checking
-format               # Format all code
-check                # Run all linters and type checking
 ```
 
 ### NPM Scripts
@@ -58,11 +74,14 @@ npm run typecheck    # TypeScript type checking
 ## Important Notes
 
 - **DO NOT MODIFY** anything in the `src/old/` directory
+- **DO NOT READ** image files directly - use `file` command to check their type
 - Astro uses file-based routing - pages in `src/pages/` become routes
+- All static assets must be in `public/` directory
 - Development server runs on port 8080
 - Hot reload is enabled in both Docker and Nix environments
 - Use professional "we" language, not first-person "I" statements
 - Maintain consistent color scheme with good contrast for accessibility
+- Run `npm run lint` and `npm run typecheck` before committing
 
 ## Design Standards
 

@@ -42,18 +42,35 @@ jobs:
       issues: write
       id-token: write # Required for GitHub OIDC token authentication
       actions: read # Required for Claude to read CI results
+      checks: write # Allow Claude to create check runs
+      statuses: write # Allow Claude to update commit statuses
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0  # Full history for better context
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@beta
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # This is required for full Bash access in workflows
+          additional_permissions: |
+            actions: read
+            checks: write
+            statuses: write
 
           # Specify model - using Claude Opus 4 for maximum capability
           model: "claude-opus-4-20250514"
@@ -71,16 +88,12 @@ jobs:
             - Security concerns
             - Test coverage
             
-            Run the following checks if applicable:
-            - npm install (if dependencies are missing)
-            - npm run lint
-            - npm run typecheck
-            - npm run test
+            Run the following checks:
+            1. npm run lint
+            2. npm run typecheck
+            3. npm run test (if tests exist)
             
-            Error Handling:
-            - Check if node_modules exists before running commands
-            - If any command fails due to missing dependencies, run npm install first
-            - Provide clear explanations for any errors encountered
+            Note: Dependencies are already installed. The working directory is the repository root.
             
             Be constructive and helpful in your feedback.
 
