@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
 
 // Mock Astro component testing - this is a simple example
 // In a real Astro project, you might use @astrojs/test or similar
