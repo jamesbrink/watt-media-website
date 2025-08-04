@@ -1,58 +1,54 @@
 name: Claude Code Review
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+pull_request:
+types: [opened, synchronize]
 
 jobs:
-  claude-review:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write       # Changed from read to write
-      pull-requests: write  # Changed from read to write
-      issues: write         # Changed from read to write
-      id-token: write
-      actions: read         # Added for reading CI results
-      packages: write       # Added for package management
-      deployments: write    # Added for deployment access
-      statuses: write       # Added for commit status updates
-      checks: write         # Added for check runs
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Changed from 1 to 0 for full history
+claude-review:
+runs-on: ubuntu-latest
+permissions:
+contents: write
+pull-requests: write
+issues: write
+id-token: write
+actions: read
+packages: write
+deployments: write
+statuses: write
+checks: write
 
-      - name: Run Claude Code Review
-        id: claude-review
-        uses: anthropics/claude-code-action@beta
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+```
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
+      token: ${{ secrets.GITHUB_TOKEN }}
 
-          # Grant all additional permissions
-          additional_permissions: |
-            actions: read
-            checks: write
-            contents: write
-            deployments: write
-            issues: write
-            packages: write
-            pull-requests: write
-            statuses: write
+  - name: Run Claude Code Review
+    id: claude-review
+    uses: anthropics/claude-code-action@beta
+    with:
+      claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      github_token: ${{ secrets.GITHUB_TOKEN }}
 
-          # Uncomment to use Claude Opus 4 for more thorough reviews
-          # model: "claude-opus-4-20250514"
-          
-          # Direct prompt for automated review
-          direct_prompt: |
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage
-            
-            Be constructive and helpful in your feedback.
-
-          # Removed allowed_tools to gra
+      additional_permissions: |
+        actions: read
+        checks: write
+        contents: write
+        deployments: write
+        issues: write
+        packages: write
+        pull-requests: write
+        statuses: write
+      
+      direct_prompt: |
+        Please review this pull request and provide feedback on:
+        - Code quality and best practices
+        - Potential bugs or issues
+        - Performance considerations
+        - Security concerns
+        - Test coverage
+        
+        Be constructive and helpful in your feedback.
