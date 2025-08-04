@@ -2,15 +2,11 @@
   "mcpServers": {
     "nixos": {
       "command": "uvx",
-      "args": [
-        "mcp-nixos"
-      ]
+      "args": ["mcp-nixos"]
     },
     "playwright": {
       "command": "npx",
-      "args": [
-        "@playwright/mcp@latest"
-      ]
+      "args": ["@playwright/mcp@latest"]
     }
   }
 }

@@ -7,6 +7,7 @@ A modern, responsive website for wattmedia.au - graphic design and multimedia se
 - Professional branding and design services portfolio
 - Responsive design optimized for all devices
 - Service-specific pages for detailed information
+- Portfolio gallery with lightbox functionality
 - Social media integration (Facebook and Instagram)
 - Accessible and SEO-friendly markup
 - Fast loading with optimized assets
@@ -17,6 +18,7 @@ A modern, responsive website for wattmedia.au - graphic design and multimedia se
 [Docker](https://www.docker.com/) is the easiest way to run this project. Docker creates a consistent development environment on any computer.
 
 ### Prerequisites
+
 - Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
   - For Windows: [Download Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
   - For Mac: [Download Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
@@ -36,6 +38,7 @@ docker compose up
 ```
 
 To stop the server, press `Ctrl+C` in the terminal, then run:
+
 ```bash
 docker compose down
 ```
@@ -47,6 +50,7 @@ docker compose down
 ### Installing Nix
 
 **For macOS and Linux:**
+
 ```bash
 # Install Nix (works on Intel and Apple Silicon Macs)
 sh <(curl -L https://nixos.org/nix/install)
@@ -56,6 +60,7 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
 **For Windows:**
+
 - Use [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) and follow the Linux instructions
 - Or use [Determinate Systems Nix Installer](https://determinate.systems/posts/determinate-nix-installer)
 
@@ -72,59 +77,89 @@ dev
 ```
 
 ### Useful Commands
+
 - `dev` - Start the Astro development server with hot reload
 - `build` - Build the website for production
-- `test` - Run the test suite
+- `run-tests` - Run the test suite (watch mode)
+- `run-tests:once` - Run unit tests once (CI mode)
+- `run-tests:e2e` - Run Playwright E2E tests
 - `lint` - Check code quality with ESLint
 - `typecheck` - Run TypeScript type checking
+- `format` - Format all code with treefmt
+- `check` - Run all linters and tests
 - `exit` - Leave the Nix development environment
 
 ## 📁 Project Structure
 
 ```
 watt-media-website/
-├── src/                      # All website source files
-│   ├── components/          # Reusable Astro components
-│   ├── layouts/            # Page layouts
-│   │   └── BaseLayout.astro
-│   ├── pages/              # Astro pages (file-based routing)
-│   │   ├── index.astro     # Homepage
-│   │   ├── about.astro     # About page
-│   │   ├── services.astro  # Services overview
-│   │   ├── portfolio.astro # Portfolio showcase
-│   │   ├── contact.astro   # Contact information
+├── e2e/                        # Playwright end-to-end tests
+│   └── lightbox.spec.ts       # Portfolio lightbox tests
+├── public/                     # Static assets (served directly)
+│   ├── images/                # All website images
+│   │   ├── portfolio/         # Portfolio images organized by category
+│   │   │   ├── branding/      # Logo and brand identity work
+│   │   │   ├── creative-art/  # Creative artwork projects
+│   │   │   ├── marketing/     # Marketing campaign designs
+│   │   │   ├── packaging/     # Product packaging designs
+│   │   │   └── product-design/# Product design mockups
+│   │   └── *.svg/jpg/png      # Service images and branding assets
+│   ├── robots.txt             # SEO robots configuration
+│   ├── sitemap.xml            # XML sitemap for search engines
+│   └── llms.txt               # LLM-specific instructions
+├── src/                        # Source files
+│   ├── components/            # Reusable Astro components
+│   │   ├── ErrorBoundary.astro    # Error handling component
+│   │   ├── Footer.astro           # Site footer with social links
+│   │   ├── Image.astro            # Image component with base path handling
+│   │   └── Navigation.astro       # Main navigation menu
+│   ├── css/                   # Global stylesheets
+│   │   └── main.css           # Tailwind CSS directives and custom styles
+│   ├── layouts/               # Page layouts
+│   │   ├── BaseLayout.astro   # Base HTML structure with SEO
+│   │   └── MainLayout.astro   # Main site layout with nav/footer
+│   ├── pages/                 # File-based routing (routes match filenames)
+│   │   ├── index.astro        # Homepage
+│   │   ├── about.astro        # About page
+│   │   ├── services.astro     # Services overview
+│   │   ├── portfolio.astro    # Portfolio gallery with lightbox
+│   │   ├── contact.astro      # Contact form page
 │   │   ├── testimonials.astro # Client testimonials
-│   │   │
-│   │   ├── audio-services.astro  # Service pages
-│   │   ├── branding-identity.astro
-│   │   ├── print-marketing-design.astro
-│   │   ├── social-media-design.astro
-│   │   └── visual-content-creation.astro
-│   │
-│   ├── css/                 # Stylesheets
-│   │   └── main.css        # Tailwind CSS imports
-│   │
-│   └── old/                # Legacy website (DO NOT MODIFY)
-│
-├── public/                  # Static assets (served as-is)
-│   ├── images/             # All images and graphics
-│   │   ├── portfolio/      # Portfolio images by category
-│   │   ├── *.svg          # Vector graphics for services
-│   │   ├── *.png          # Logo and other images
-│   │   └── favicon.png    # Browser tab icon
-│   ├── robots.txt         # SEO configuration
-│   └── sitemap.xml        # Site structure for search engines
-│
-├── docker-compose.yml      # Docker configuration
-├── Dockerfile.dev         # Docker development image
-├── flake.nix             # Nix configuration
-├── package.json          # Node.js dependencies
-├── astro.config.mjs      # Astro configuration
-├── tailwind.config.js    # Tailwind CSS settings
-├── tsconfig.json         # TypeScript configuration
-├── vitest.config.js      # Test runner configuration
-├── CLAUDE.md            # Instructions for Claude Code
-└── README.md            # This file
+│   │   ├── audio-services.astro           # Audio production service
+│   │   ├── branding-identity.astro        # Branding service
+│   │   ├── print-marketing-design.astro   # Print design service
+│   │   ├── social-media-design.astro      # Social media service
+│   │   └── visual-content-creation.astro  # Visual content service
+│   ├── test/                  # Unit tests
+│   │   ├── components/        # Component tests
+│   │   ├── astro.test.js      # Astro configuration tests
+│   │   ├── images.test.js     # Image integrity tests
+│   │   └── setup.js           # Test configuration
+│   └── env.d.ts               # TypeScript environment types
+├── Configuration Files
+│   ├── astro.config.mjs       # Astro configuration (site, base, integrations)
+│   ├── tailwind.config.js     # Tailwind CSS configuration
+│   ├── postcss.config.js      # PostCSS configuration
+│   ├── vitest.config.js       # Vitest test runner configuration
+│   ├── playwright.config.ts   # Playwright E2E test configuration
+│   ├── tsconfig.json          # TypeScript configuration
+│   ├── .eslintrc.cjs          # ESLint linting rules
+│   ├── .prettierrc.json       # Prettier code formatting
+│   └── .stylelintrc.json      # Stylelint CSS linting
+├── Docker Files
+│   ├── docker-compose.yml     # Docker Compose for development
+│   ├── Dockerfile             # Production Docker image
+│   └── Dockerfile.dev         # Development Docker image with hot reload
+├── Nix Files
+│   ├── flake.nix              # Nix flake configuration
+│   └── flake.lock             # Nix flake lock file
+├── GitHub Actions
+│   └── .github/workflows/
+│       ├── ci-cd.yml          # CI/CD pipeline with tests
+│       ├── claude.yml         # Claude Code integration
+│       └── claude-code-review.yml # Claude code review
+├── CLAUDE.md                  # Instructions for Claude Code
+└── README.md                  # This file
 ```
 
 ## 🎨 Services Offered
@@ -132,30 +167,35 @@ watt-media-website/
 The website showcases the following services:
 
 ### Branding & Identity
+
 - Logo design
 - Complete brand packages
 - Business cards
 - Brand voice and messaging
 
 ### Print & Marketing Design
+
 - Brochures and flyers
 - Signage and banners
 - Packaging design
 - Marketing materials
 
 ### Social Media Design
+
 - Social media posts
 - Instagram stories
 - Facebook ads
 - Profile graphics
 
 ### Visual Content Creation
+
 - Professional photography
 - Video production
 - Photo editing and retouching
 - Event photography
 
 ### Audio Services
+
 - Podcast editing
 - Voiceover recording
 - Audio mixing & mastering
@@ -169,6 +209,7 @@ The website showcases the following services:
 - **[Nix](https://nixos.org/)** - Reproducible development environments
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Vitest](https://vitest.dev/)** - Fast unit testing framework
+- **[Playwright](https://playwright.dev/)** - End-to-end testing framework
 
 ## 📝 Making Changes
 
@@ -183,6 +224,7 @@ The website showcases the following services:
 ### Common Edits
 
 **Changing Text:**
+
 ```astro
 <!-- Find text like this -->
 <p>Old text here</p>
@@ -192,6 +234,7 @@ The website showcases the following services:
 ```
 
 **Updating Prices:**
+
 ```astro
 <!-- Look for price text -->
 <span class="text-xl font-bold text-gray-800">$100 AUD</span>
@@ -201,28 +244,46 @@ The website showcases the following services:
 ```
 
 **Changing Images:**
+
 1. Add your new image to `public/images/`
-2. Update the image path in the Astro file:
+2. Update the image path in the Astro file using the Image component:
+
 ```astro
-<img src="/images/your-new-image.png" alt="Description of image">
+<Image src="/images/your-new-image.png" alt="Description of image" />
 ```
 
 ### Important Guidelines
 
 - ✅ Use "we" instead of "I" in all text
 - ✅ Keep file names lowercase (e.g., `about.astro` not `About.astro`)
-- ❌ Never modify files in `src/old/` directory
+- ✅ All static assets go in `public/` directory
 - ✅ Test all changes in your browser before deploying
 - ✅ Run `npm run lint` and `npm run typecheck` before committing
 
 ## 🧪 Testing
 
 Run the test suite:
-```bash
-# With Docker
-docker compose run --rm web npm test
 
-# With Nix
+```bash
+# Unit tests with Vitest
+npm run test
+
+# E2E tests with Playwright
+npm run test:e2e
+
+# Run all tests
+npm run test:all
+```
+
+With Docker:
+
+```bash
+docker compose run --rm web npm test
+```
+
+With Nix:
+
+```bash
 nix develop -c npm test
 ```
 
@@ -231,11 +292,13 @@ nix develop -c npm test
 When you're ready to publish the website:
 
 ### With Docker
+
 ```bash
 docker compose run --rm web npm run build
 ```
 
 ### With Nix
+
 ```bash
 nix develop -c npm run build
 ```
@@ -249,11 +312,26 @@ This repository is configured for automatic deployment to GitHub Pages. Every pu
 ### Automatic Deployment
 
 The site uses GitHub Actions for CI/CD:
+
 - **Automatic builds** on every push to main
+- **Test suite** runs before deployment
 - **Static site generation** using Astro
 - **Automatic sitemap generation** for SEO
 - **Free SSL certificate** included by default
 - **Available at**: `https://jamesbrink.github.io/watt-media-website/`
+
+### Base Path Configuration
+
+The site automatically handles different base paths:
+
+- **Development**: `/` (no base path)
+- **Production**: `/watt-media-website` (for GitHub Pages)
+
+This is configured in:
+
+- `astro.config.mjs` - Site and base configuration
+- `src/components/Image.astro` - Image path handling
+- Portfolio lightbox JavaScript - Dynamic path resolution
 
 ### Custom Domain Setup
 
@@ -261,7 +339,7 @@ To use a custom domain (e.g., wattmedia.au):
 
 1. **In your repository**:
    - Create a file `public/CNAME` with your domain: `wattmedia.au`
-   - Update `astro.config.mjs`: change `site` and `base` values
+   - Update `astro.config.mjs`: change `site` and remove `base`
 
 2. **In GitHub**:
    - Go to Settings → Pages
@@ -292,6 +370,7 @@ To use a custom domain (e.g., wattmedia.au):
 ### Deployment Status
 
 You can check the deployment status:
+
 1. Go to the repository on GitHub
 2. Click the "Actions" tab
 3. View the latest "Deploy to GitHub Pages" workflow
@@ -299,6 +378,7 @@ You can check the deployment status:
 ## 🌐 Social Media
 
 The website includes links to:
+
 - Facebook: https://www.facebook.com/wattmediaau
 - Instagram: @watt_media_au
 
@@ -307,12 +387,16 @@ These appear in the footer of every page.
 ## 🐛 Troubleshooting
 
 ### "Port 8080 is already in use"
+
 Another program is using port 8080. Either:
+
 1. Stop the other program, or
 2. Change the port in `docker-compose.yml` and run commands
 
 ### "Cannot find module"
+
 Run these commands:
+
 ```bash
 # With Docker
 docker compose run --rm web npm install
@@ -322,23 +406,36 @@ nix develop -c npm install
 ```
 
 ### Changes not showing
+
 1. Hard refresh your browser: `Ctrl+Shift+R` (Windows/Linux) or `Cmd+Shift+R` (Mac)
 2. Clear browser cache
 3. Make sure the development server is running
 
 ### Docker not starting
+
 1. Make sure Docker Desktop is running
 2. Try: `docker compose down` then `docker compose up --build`
 
 ### TypeScript errors
+
 Run type checking to see detailed errors:
+
 ```bash
 npm run typecheck
+```
+
+### Image path issues
+
+The Image component automatically handles base paths for different environments. Always use:
+
+```astro
+<Image src="/images/your-image.png" alt="Description" />
 ```
 
 ## 📞 Support
 
 For technical issues with the website, consult:
+
 - [Astro Documentation](https://docs.astro.build/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Docker Documentation](https://docs.docker.com/)

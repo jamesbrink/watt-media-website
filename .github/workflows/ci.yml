@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run linting
+      run: npm run lint
+      
+    - name: Run type checking
+      run: npm run typecheck
+      
+    - name: Run tests
+      run: npm test -- --run
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
+      
+    - name: Run E2E tests
+      run: npm run test:e2e -- --project=chromium
+      
+    - name: Check build output
+      run: |
+        echo "=== Checking build output ==="
+        echo "Contents of dist directory:"
+        ls -la dist/
+        echo ""
+        echo "Checking for required files..."
+        test -f dist/index.html || (echo "❌ index.html missing!" && exit 1)
+        test -d dist/images || (echo "❌ images directory missing!" && exit 1)
+        test -f dist/images/watt-media-logo.png || (echo "❌ Logo missing!" && exit 1)
+        echo "✅ All required files present"
+        
+    - name: Test asset paths
+      run: |
+        echo "=== Checking asset paths in HTML ==="
+        # Check that assets use the correct base path
+        if grep -q 'href="/assets/' dist/index.html || grep -q 'src="/images/' dist/index.html; then
+          echo "❌ Found absolute paths without base path!"
+          echo "Assets should use /watt-media-website/ prefix"
+          grep -n -E '(href|src)="/(assets|images)/' dist/index.html || true
+          exit 1
+        fi
+        
+        # Check that assets use the correct base path
+        if grep -q 'href="/watt-media-website/assets/' dist/index.html && grep -q 'src="/watt-media-website/images/' dist/index.html; then
+          echo "✅ Asset paths correctly use base path"
+        else
+          echo "⚠️  Could not verify asset paths use correct base"
+        fi
+        
+    - name: Upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: dist/
+        retention-days: 7
