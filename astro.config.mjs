@@ -17,7 +17,6 @@ export default defineConfig({
   build: {
     assets: 'assets'
   },
-  publicDir: 'src/public',
   image: {
     service: {
       entrypoint: 'astro/assets/services/sharp'
