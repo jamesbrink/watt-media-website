@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import Link from '../components/Link.astro';
 ---
 
 <MainLayout
@@ -142,9 +143,9 @@ import MainLayout from '../layouts/MainLayout.astro';
             <p class="text-lg text-gray-700 mb-6">
               Get in touch with us today to see how we can help your business.
             </p>
-            <a href="/contact" class="btn-primary inline-block">
+            <Link href="/contact" class="btn-primary inline-block">
               Start Your Branding Project
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -169,18 +170,18 @@ import MainLayout from '../layouts/MainLayout.astro';
         Related Services
       </h2>
       <div class="grid md:grid-cols-3 gap-8">
-        <a href="/print-marketing-design" class="card hover:shadow-xl transition-shadow">
+        <Link href="/print-marketing-design" class="card hover:shadow-xl transition-shadow">
           <h3 class="text-xl font-bold font-quantico mb-3">Print & Marketing Design</h3>
           <p class="text-gray-600">Professional print materials that make an impact</p>
-        </a>
-        <a href="/social-media-design" class="card hover:shadow-xl transition-shadow">
+        </Link>
+        <Link href="/social-media-design" class="card hover:shadow-xl transition-shadow">
           <h3 class="text-xl font-bold font-quantico mb-3">Social Media Design</h3>
           <p class="text-gray-600">Engaging graphics for your social presence</p>
-        </a>
-        <a href="/visual-content-creation" class="card hover:shadow-xl transition-shadow">
+        </Link>
+        <Link href="/visual-content-creation" class="card hover:shadow-xl transition-shadow">
           <h3 class="text-xl font-bold font-quantico mb-3">Visual Content Creation</h3>
           <p class="text-gray-600">Stunning visuals that tell your story</p>
-        </a>
+        </Link>
       </div>
     </div>
   </section>

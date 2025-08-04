@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import Link from '../components/Link.astro';
 ---
 
 <MainLayout
@@ -52,10 +53,10 @@ import MainLayout from '../layouts/MainLayout.astro';
               quality of our work.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/portfolio" class="btn-primary inline-block"> View Our Portfolio </a>
-              <a href="/contact" class="btn-secondary inline-block">
+              <Link href="/portfolio" class="btn-primary inline-block"> View Our Portfolio </Link>
+              <Link href="/contact" class="btn-secondary inline-block">
                 Be Our Next Success Story
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -255,7 +256,7 @@ import MainLayout from '../layouts/MainLayout.astro';
       <p class="text-lg text-gray-600 mb-8">
         Let's work together to create something amazing for your business.
       </p>
-      <a href="/contact" class="btn-primary inline-block"> Start Your Project </a>
+      <Link href="/contact" class="btn-primary inline-block"> Start Your Project </Link>
     </div>
   </section>
 </MainLayout>

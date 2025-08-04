@@ -1,6 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import Image from '../components/Image.astro';
+import Link from '../components/Link.astro';
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -121,12 +122,12 @@ const structuredData = {
             We help your business thrive in the print and online world.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <a href="/contact" class="btn-primary inline-block text-center">
+            <Link href="/contact" class="btn-primary inline-block text-center">
               Get Started Today
-            </a>
-            <a href="/portfolio" class="btn-secondary inline-block text-center">
+            </Link>
+            <Link href="/portfolio" class="btn-secondary inline-block text-center">
               View Our Work
-            </a>
+            </Link>
           </div>
         </div>
         <div class="flex justify-center md:justify-end">
@@ -149,7 +150,7 @@ const structuredData = {
         Our Services
       </h2>
       <div class="grid md:grid-cols-3 gap-8">
-        <a href="/branding-identity" class="card hover:transform hover:-translate-y-2 transition-all duration-300 block">
+        <Link href="/branding-identity" class="card hover:transform hover:-translate-y-2 transition-all duration-300 block">
           <div class="text-watt-yellow mb-4">
             <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -165,8 +166,8 @@ const structuredData = {
             Professional logo design and complete brand identity packages to make your business
             stand out.
           </p>
-        </a>
-        <a href="/print-marketing-design" class="card hover:transform hover:-translate-y-2 transition-all duration-300 block">
+        </Link>
+        <Link href="/print-marketing-design" class="card hover:transform hover:-translate-y-2 transition-all duration-300 block">
           <div class="text-watt-yellow mb-4">
             <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -181,8 +182,8 @@ const structuredData = {
           <p class="text-gray-600">
             Eye-catching brochures, flyers, and marketing materials that drive results.
           </p>
-        </a>
-        <a href="/visual-content-creation" class="card hover:transform hover:-translate-y-2 transition-all duration-300 block">
+        </Link>
+        <Link href="/visual-content-creation" class="card hover:transform hover:-translate-y-2 transition-all duration-300 block">
           <div class="text-watt-yellow mb-4">
             <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -198,10 +199,10 @@ const structuredData = {
             Social media graphics, video production, and digital content that engages your
             audience.
           </p>
-        </a>
+        </Link>
       </div>
       <div class="text-center mt-12">
-        <a href="/services" class="btn-primary inline-block"> Explore All Services </a>
+        <Link href="/services" class="btn-primary inline-block"> Explore All Services </Link>
       </div>
     </div>
   </section>
@@ -215,7 +216,7 @@ const structuredData = {
       <p class="text-lg text-gray-600 mb-8">
         Get in touch today and let's discuss how we can help your business succeed.
       </p>
-      <a href="/contact" class="btn-primary inline-block text-lg"> Contact Us Now </a>
+      <Link href="/contact" class="btn-primary inline-block text-lg"> Contact Us Now </Link>
     </div>
   </section>
 </MainLayout>
