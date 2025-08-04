@@ -82,13 +82,16 @@
         background-color: rgba(0, 0, 0, 0.95);
         overflow: hidden;
         touch-action: manipulation;
+        align-items: center;
+        justify-content: center;
       }
 
       .lightbox-content {
         display: block;
-        margin: auto;
         max-width: 95%;
         max-height: 85vh;
+        width: auto;
+        height: auto;
         object-fit: contain;
         transition: transform 0.3s ease;
       }
@@ -122,30 +125,44 @@
       /* Mobile-specific lightbox improvements */
       @media (max-width: 768px) {
         .lightbox-content {
-          max-width: 98%;
-          max-height: 80vh;
-          margin-top: 10vh;
+          max-width: 95vw;
+          max-height: 90vh;
+          width: auto;
+          height: auto;
         }
         
         .lightbox-close {
-          top: 10px;
-          right: 10px;
-          font-size: 24px;
-          width: 40px;
-          height: 40px;
+          top: 20px;
+          right: 20px;
+          font-size: 28px;
+          width: 50px;
+          height: 50px;
+          background: rgba(0, 0, 0, 0.8);
         }
         
         .lightbox {
-          overflow: auto;
+          padding: 20px;
+          overflow: hidden;
         }
       }
       
       /* Very small screens */
       @media (max-width: 480px) {
         .lightbox-content {
-          max-width: 100%;
-          max-height: 75vh;
-          margin-top: 12.5vh;
+          max-width: 90vw;
+          max-height: 85vh;
+        }
+        
+        .lightbox-close {
+          top: 15px;
+          right: 15px;
+          font-size: 24px;
+          width: 45px;
+          height: 45px;
+        }
+        
+        .lightbox {
+          padding: 15px;
         }
       }
     </style>
@@ -894,21 +911,41 @@
       // Lightbox functions
       function openLightbox(imageSrc) {
         const lightbox = document.getElementById("lightbox");
+        const lightboxImg = document.getElementById("lightbox-img");
+        
+        // Set up lightbox display
         lightbox.style.display = "flex";
         lightbox.style.alignItems = "center";
         lightbox.style.justifyContent = "center";
-        document.getElementById("lightbox-img").src = imageSrc;
-        document.body.style.overflow = "hidden";
         
-        // Prevent background scrolling on mobile
+        // Load image and ensure proper display
+        lightboxImg.src = imageSrc;
+        lightboxImg.style.maxWidth = "100%";
+        lightboxImg.style.maxHeight = "100%";
+        lightboxImg.style.width = "auto";
+        lightboxImg.style.height = "auto";
+        
+        // Prevent background scrolling
+        document.body.style.overflow = "hidden";
         document.body.style.position = "fixed";
         document.body.style.width = "100%";
+        document.body.style.top = `-${window.scrollY}px`;
       }
 
       function closeLightbox() {
-        document.getElementById("lightbox").style.display = "none";
+        const lightbox = document.getElementById("lightbox");
+        const scrollY = document.body.style.top;
+        
+        lightbox.style.display = "none";
         document.body.style.overflow = "auto";
         document.body.style.position = "static";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        
+        // Restore scroll position
+        if (scrollY) {
+          window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        }
       }
 
       // Close lightbox with escape key
