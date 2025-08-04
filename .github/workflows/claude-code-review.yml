@@ -88,12 +88,11 @@ jobs:
             - Security concerns
             - Test coverage
             
-            Run the following checks:
-            1. npm run lint
-            2. npm run typecheck
-            3. npm run test (if tests exist)
+            Note: The CI workflow already runs linting, type checking, and tests automatically.
+            You can check the CI results instead of re-running these commands.
+            Only run additional checks if you need to investigate a specific issue.
             
-            Note: Dependencies are already installed. The working directory is the repository root.
+            Dependencies are already installed. The working directory is the repository root.
             
             Be constructive and helpful in your feedback.
 

@@ -1,14 +1,13 @@
 ---
 import Link from './Link.astro';
+import { getBasePath } from '../utils/paths';
 
 export interface Props {
   currentPath?: string;
 }
 
 const { currentPath = "/" } = Astro.props;
-const basePath = import.meta.env.BASE_URL.endsWith('/') 
-  ? import.meta.env.BASE_URL.slice(0, -1) 
-  : import.meta.env.BASE_URL;
+const basePath = getBasePath();
 
 const navItems = [
   { href: "/", label: "HOME" },
