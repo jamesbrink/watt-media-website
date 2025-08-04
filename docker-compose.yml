@@ -13,9 +13,10 @@ services:
       - ./src:/app/src:delegated
       - ./package.json:/app/package.json:ro
       - ./package-lock.json:/app/package-lock.json:ro
-      - ./vite.config.js:/app/vite.config.js:ro
+      - ./astro.config.mjs:/app/astro.config.mjs:ro
       - ./tailwind.config.js:/app/tailwind.config.js:ro
       - ./postcss.config.js:/app/postcss.config.js:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
       # Exclude node_modules to use container's dependencies
       - /app/node_modules
     environment:

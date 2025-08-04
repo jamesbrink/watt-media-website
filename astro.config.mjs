@@ -12,7 +12,7 @@ export default defineConfig({
   ],
   server: {
     port: 8080,
-    host: 'localhost'
+    host: '0.0.0.0'
   },
   build: {
     assets: 'assets'
