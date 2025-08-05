@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import { addBasePath } from '../utils/paths';
+
+export interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  class?: string;
+}
+
+const { href, class: className, ...rest } = Astro.props;
+
+// Use utility function to handle base path
+const linkHref = addBasePath(href);
+---
+
+<a href={linkHref} class={className} {...rest}>
+  <slot />
+</a>

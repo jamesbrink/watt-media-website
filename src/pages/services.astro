@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import Link from '../components/Link.astro';
 ---
 
 <MainLayout
@@ -24,7 +25,7 @@ import MainLayout from '../layouts/MainLayout.astro';
     <div class="max-w-7xl mx-auto section-padding">
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Branding & Identity -->
-        <a href="/branding-identity" class="group">
+        <Link href="/branding-identity" class="group">
           <div
             class="card h-full hover:border-watt-yellow hover:border-2 transition-all duration-300"
           >
@@ -46,10 +47,10 @@ import MainLayout from '../layouts/MainLayout.astro';
             </p>
             <p class="text-watt-yellow font-semibold">Starting from $200 AUD</p>
           </div>
-        </a>
+        </Link>
 
         <!-- Print & Marketing -->
-        <a href="/print-marketing-design" class="group">
+        <Link href="/print-marketing-design" class="group">
           <div
             class="card h-full hover:border-watt-yellow hover:border-2 transition-all duration-300"
           >
@@ -71,10 +72,10 @@ import MainLayout from '../layouts/MainLayout.astro';
             </p>
             <p class="text-watt-yellow font-semibold">Starting from $150 AUD</p>
           </div>
-        </a>
+        </Link>
 
         <!-- Social Media Design -->
-        <a href="/social-media-design" class="group">
+        <Link href="/social-media-design" class="group">
           <div
             class="card h-full hover:border-watt-yellow hover:border-2 transition-all duration-300"
           >
@@ -95,10 +96,10 @@ import MainLayout from '../layouts/MainLayout.astro';
             </p>
             <p class="text-watt-yellow font-semibold">Starting from $50 AUD</p>
           </div>
-        </a>
+        </Link>
 
         <!-- Visual Content Creation -->
-        <a href="/visual-content-creation" class="group">
+        <Link href="/visual-content-creation" class="group">
           <div
             class="card h-full hover:border-watt-yellow hover:border-2 transition-all duration-300"
           >
@@ -119,10 +120,10 @@ import MainLayout from '../layouts/MainLayout.astro';
             </p>
             <p class="text-watt-yellow font-semibold">Starting from $100 AUD</p>
           </div>
-        </a>
+        </Link>
 
         <!-- Audio Services -->
-        <a href="/audio-services" class="group">
+        <Link href="/audio-services" class="group">
           <div
             class="card h-full hover:border-watt-yellow hover:border-2 transition-all duration-300"
           >
@@ -143,7 +144,7 @@ import MainLayout from '../layouts/MainLayout.astro';
             </p>
             <p class="text-watt-yellow font-semibold">Starting from $100 AUD</p>
           </div>
-        </a>
+        </Link>
 
         <!-- Custom Solutions -->
         <div
@@ -169,9 +170,9 @@ import MainLayout from '../layouts/MainLayout.astro';
             Have a unique project in mind? Let's discuss your specific needs and create a custom
             solution.
           </p>
-          <a href="/contact" class="text-watt-yellow font-semibold hover:underline">
+          <Link href="/contact" class="text-watt-yellow font-semibold hover:underline">
             Get in Touch →
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -259,8 +260,8 @@ import MainLayout from '../layouts/MainLayout.astro';
         Let's bring your vision to life with professional design services.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/contact" class="btn-primary inline-block"> Get a Quote </a>
-        <a href="/portfolio" class="btn-secondary inline-block"> View Portfolio </a>
+        <Link href="/contact" class="btn-primary inline-block"> Get a Quote </Link>
+        <Link href="/portfolio" class="btn-secondary inline-block"> View Portfolio </Link>
       </div>
     </div>
   </section>
