@@ -93,7 +93,7 @@ test.describe('Image Loading', () => {
     }
   });
 
-  test('should handle 404 images gracefully', async ({ page, request, baseURL }) => {
+  test('should handle 404 images gracefully', async ({ page }) => {
     await page.goto('/');
     
     // Check for any failed image requests
