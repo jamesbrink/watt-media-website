@@ -1,0 +1,175 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # First job: Run all tests and build
+  test-and-build:
+    name: Test and Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run linting
+      run: npm run lint
+      
+    - name: Run type checking
+      run: npm run typecheck
+      
+    - name: Run unit tests
+      run: npm test -- --run
+      
+    - name: Build project
+      run: NODE_ENV=production npm run build
+      
+    - name: Run build validation tests
+      run: npm run test:build
+      
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
+      
+    - name: Run E2E tests
+      run: npm run test:e2e -- --project=chromium
+      
+    - name: Verify critical files
+      run: |
+        echo "=== Verifying critical files ==="
+        critical_files=(
+          "dist/index.html"
+          "dist/images/watt-media-logo.png"
+          "dist/images/favicon.png"
+          "dist/sitemap-index.xml"
+        )
+        
+        for file in "${critical_files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "✅ $file exists"
+          else
+            echo "❌ $file is missing!"
+            exit 1
+          fi
+        done
+        
+    - name: Check for broken image paths
+      run: |
+        echo "=== Checking for broken image paths ==="
+        # Check for any images without base path
+        if grep -r 'src="/images/' dist/*.html dist/**/*.html 2>/dev/null; then
+          echo "❌ Found images without base path!"
+          exit 1
+        fi
+        
+        # Check for malformed paths
+        if grep -r 'watt-media-websiteimages' dist/*.html dist/**/*.html 2>/dev/null; then
+          echo "❌ Found malformed image paths!"
+          exit 1
+        fi
+        
+        echo "✅ All image paths look correct"
+        
+    - name: Upload build artifacts
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: production-build
+        path: dist/
+        retention-days: 1
+        
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          test-results/
+          playwright-report/
+        retention-days: 7
+
+  # Second job: Deploy (only runs on main branch after tests pass)
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: test-and-build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: production-build
+        path: dist/
+        
+    - name: Verify downloaded artifacts
+      run: |
+        echo "=== Contents of dist directory ==="
+        ls -la dist/
+        echo ""
+        if [ ! -f "dist/index.html" ]; then
+          echo "❌ Build artifacts incomplete!"
+          exit 1
+        fi
+        echo "✅ Build artifacts verified"
+        
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+      
+    - name: Upload to GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: dist/
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+      
+    - name: Verify deployment
+      run: |
+        echo "✅ Deployed to: ${{ steps.deployment.outputs.page_url }}"
+        echo "Waiting 30 seconds for deployment to propagate..."
+        sleep 30
+        
+        # Test that the site is accessible
+        response=$(curl -s -o /dev/null -w "%{http_code}" "${{ steps.deployment.outputs.page_url }}")
+        if [ "$response" = "200" ]; then
+          echo "✅ Site is accessible (HTTP $response)"
+        else
+          echo "⚠️  Site returned HTTP $response (may still be propagating)"
+        fi
