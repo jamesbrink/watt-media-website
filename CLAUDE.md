@@ -138,9 +138,23 @@ npm run typecheck    # TypeScript type checking
 - Hot reload is enabled in both Docker and Nix environments
 - Use professional "we" language, not first-person "I" statements
 - Maintain consistent color scheme with good contrast for accessibility
-- When developing: Run `npm run lint` and `npm run typecheck` before committing
-- When reviewing PRs: Check CI results instead of re-running tests (they run automatically)
 - The Image component handles base path for both dev and production environments
+
+## Pre-commit Checklist
+
+**IMPORTANT**: Always run these commands locally before committing:
+
+```bash
+# Run all checks in CI mode (no watch)
+npm run lint         # Check code style
+npm run typecheck    # Check TypeScript types
+CI=true npm test     # Run all unit tests once
+
+# Or run all at once:
+npm run lint && npm run typecheck && CI=true npm test
+```
+
+If any of these fail, fix the issues before committing. The CI/CD pipeline will fail if these checks don't pass.
 
 ## Design Standards
 
