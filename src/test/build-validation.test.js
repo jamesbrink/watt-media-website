@@ -11,11 +11,18 @@ describe('Build Validation', () => {
   const distDir = path.join(__dirname, '../../dist');
   
   beforeAll(async () => {
-    // Ensure we have a fresh build
+    // Skip build in CI since it's already built
+    if (process.env.CI) {
+      console.log('Running in CI, using existing build...');
+      return;
+    }
+    
+    // Ensure we have a fresh build locally
     console.log('Building project for validation...');
     execSync('NODE_ENV=production npm run build', { 
       stdio: 'inherit',
-      cwd: path.join(__dirname, '../..')
+      cwd: path.join(__dirname, '../..'),
+      env: { ...process.env, NODE_ENV: 'production' }
     });
   });
 
@@ -137,7 +144,7 @@ describe('Build Validation', () => {
             // Any other absolute path should be flagged
             errors.push({
               file: path.relative(distDir, fullPath),
-              path: path,
+              path: match[1],
               context: match[0]
             });
           }

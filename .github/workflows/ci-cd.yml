@@ -49,7 +49,9 @@ jobs:
       run: npm test -- --run
       
     - name: Build project
-      run: NODE_ENV=production npm run build
+      run: npm run build
+      env:
+        NODE_ENV: production
       
     - name: Run build validation tests
       run: npm run test:build
