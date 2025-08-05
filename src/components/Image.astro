@@ -1,4 +1,6 @@
 ---
+import { addBasePath } from '../utils/paths';
+
 export interface Props {
   src: string;
   alt: string;
@@ -10,8 +12,8 @@ export interface Props {
 
 const { src, alt, class: className, width, height, loading = 'lazy' } = Astro.props;
 
-// Add base path to image src if it starts with /
-const imageSrc = src.startsWith('/') ? `${import.meta.env.BASE_URL}${src.slice(1)}` : src;
+// Use the centralized path handling utility
+const imageSrc = addBasePath(src);
 ---
 
 <img
