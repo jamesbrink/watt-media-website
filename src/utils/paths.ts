@@ -13,7 +13,7 @@ export function removeTrailingSlash(path: string): string {
  * Get the base path without trailing slash
  */
 export function getBasePath(): string {
-  const basePath = import.meta.env.BASE_URL;
+  const basePath = import.meta.env?.BASE_URL || '';
   return removeTrailingSlash(basePath);
 }
 
