@@ -4,8 +4,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.NODE_ENV === 'production' ? 'https://jamesbrink.github.io' : 'http://localhost:8080',
-  base: process.env.NODE_ENV === 'production' ? '/watt-media-website' : '/',
+  site: process.env.NODE_ENV === 'production' ? 'https://wattmedia.au' : 'http://localhost:8080',
+  base: '/',
   integrations: [
     tailwind(),
     sitemap()
