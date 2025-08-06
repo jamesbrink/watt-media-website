@@ -1,6 +1,7 @@
 ---
 import '../css/main.css';
 import { addBasePath } from '../utils/paths';
+import MetaPixel from '../components/MetaPixel.astro';
 
 export interface Props {
   title: string;
@@ -76,6 +77,9 @@ const faviconPath = addBasePath('/images/favicon.png');
     {structuredData && (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     )}
+    
+    <!-- Meta Pixel tracking (only loads in production) -->
+    <MetaPixel />
   </head>
   <body class="bg-gray-50">
     <slot />
