@@ -47,35 +47,37 @@ describe('Build Validation', () => {
           while ((match = imgSrcRegex.exec(content)) !== null) {
             const src = match[1];
             
-            // Check if it's a local image that should have base path
-            if (src.startsWith('/images/')) {
-              // In production, should start with /watt-media-website/images/
+            // With custom domain, images should start with /images/ (no base path needed)
+            // Check for any lingering base path references that shouldn't be there
+            if (src.includes('/watt-media-website/')) {
               errors.push({
                 file: path.relative(distDir, fullPath),
                 src: src,
-                issue: 'Missing base path in production'
+                issue: 'Unexpected base path with custom domain'
               });
-            } else if (src.startsWith('/') && 
-                      !src.startsWith('/watt-media-website/') && 
-                      src.includes('/images/')) {
-              // Any other absolute path with images that doesn't have base path
+            }
+            // Images should either be absolute (/images/) or external (http/https)
+            else if (src.startsWith('../') || src.startsWith('./')) {
               errors.push({
                 file: path.relative(distDir, fullPath),
                 src: src,
-                issue: 'Incorrect base path'
+                issue: 'Relative paths should not be used'
               });
             }
           }
           
-          // Also check for broken base paths (double slashes, missing slashes)
-          const brokenPathRegex = /(?:href|src)=["']([^"']*watt-media-website[^/][^"']*images[^"']+)["']/g;
+          // Check for broken paths (double slashes, etc)
+          const brokenPathRegex = /(?:href|src)=["']([^"']*\/\/[^"']+)["']/g;
           while ((match = brokenPathRegex.exec(content)) !== null) {
-            const path = match[1];
-            errors.push({
-              file: path.relative(distDir, fullPath),
-              src: path,
-              issue: 'Malformed base path (missing slash)'
-            });
+            const srcPath = match[1];
+            // Ignore external URLs with protocol
+            if (!srcPath.startsWith('http://') && !srcPath.startsWith('https://')) {
+              errors.push({
+                file: path.relative(distDir, fullPath),
+                src: srcPath,
+                issue: 'Malformed path (double slashes)'
+              });
+            }
           }
         }
       }
@@ -90,7 +92,7 @@ describe('Build Validation', () => {
       
       throw new Error(
         `Found ${errors.length} image path issues in production build:\n${errorMessage}\n\n` +
-        'All local images must use the Image component to ensure proper base path handling.'
+        'Images should use absolute paths starting with /images/ for custom domain setup.'
       );
     }
   });
@@ -103,16 +105,17 @@ describe('Build Validation', () => {
     const faviconMatch = content.match(/<link[^>]*rel=["']icon["'][^>]*href=["']([^"']+)["']/);
     if (faviconMatch) {
       const faviconPath = faviconMatch[1];
-      if (!faviconPath.startsWith('/watt-media-website/')) {
+      // With custom domain, favicon should be at /images/favicon.png (no base path)
+      if (!faviconPath.startsWith('/images/')) {
         throw new Error(
           `Favicon has incorrect path in production: ${faviconPath}\n` +
-          'Expected: /watt-media-website/images/favicon.png'
+          'Expected: /images/favicon.png (for custom domain)'
         );
       }
     }
   });
 
-  it('should not have any absolute paths without base path', async () => {
+  it('should not have any broken absolute paths', async () => {
     const errors = [];
     
     async function checkHtmlFiles(dir) {
@@ -131,22 +134,23 @@ describe('Build Validation', () => {
           let match;
           
           while ((match = pathRegex.exec(content)) !== null) {
-            const path = match[1];
+            const foundPath = match[1];
             
-            // Skip external URLs, hashes, and already correct paths
-            if (path.startsWith('//') || 
-                path.startsWith('/#') ||
-                path.startsWith('/watt-media-website/') ||
-                path === '/') {
+            // Skip external URLs, hashes, root path
+            if (foundPath.startsWith('//') || 
+                foundPath.startsWith('/#') ||
+                foundPath === '/') {
               continue;
             }
             
-            // Any other absolute path should be flagged
-            errors.push({
-              file: path.relative(distDir, fullPath),
-              path: match[1],
-              context: match[0]
-            });
+            // With custom domain, we shouldn't have /watt-media-website/ prefix
+            if (foundPath.includes('/watt-media-website/')) {
+              errors.push({
+                file: path.relative(distDir, fullPath),
+                foundPath: foundPath,
+                context: match[0]
+              });
+            }
           }
         }
       }
@@ -160,8 +164,8 @@ describe('Build Validation', () => {
       ).join('\n');
       
       throw new Error(
-        `Found ${errors.length} absolute paths without base path in production:\n${errorMessage}\n\n` +
-        'Use the Link component for navigation and Image component for images.'
+        `Found ${errors.length} paths with unexpected base path in production:\n${errorMessage}\n\n` +
+        'Custom domain should not use /watt-media-website/ base path.'
       );
     }
   });
