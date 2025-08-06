@@ -84,19 +84,20 @@ jobs:
     - name: Check for broken image paths
       run: |
         echo "=== Checking for broken image paths ==="
-        # Check for any images without base path
-        if grep -r 'src="/images/' dist/*.html dist/**/*.html 2>/dev/null; then
-          echo "❌ Found images without base path!"
+        # For custom domain, images should use /images/ (no base path needed)
+        # Check for old base path that shouldn't be there
+        if grep -r '/watt-media-website/images/' dist/*.html dist/**/*.html 2>/dev/null; then
+          echo "❌ Found images with old base path (should be /images/ for custom domain)!"
           exit 1
         fi
         
-        # Check for malformed paths
+        # Check for malformed paths (missing slash between base and images)
         if grep -r 'watt-media-websiteimages' dist/*.html dist/**/*.html 2>/dev/null; then
           echo "❌ Found malformed image paths!"
           exit 1
         fi
         
-        echo "✅ All image paths look correct"
+        echo "✅ All image paths look correct for custom domain"
         
     - name: Upload build artifacts
       if: success()

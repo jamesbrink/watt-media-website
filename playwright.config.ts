@@ -58,7 +58,7 @@ export default defineConfig({
     command: process.env.CI 
       ? "NODE_ENV=production npm run preview"
       : "npm run build && npm run preview",
-    url: process.env.CI ? "http://localhost:8080/watt-media-website" : "http://localhost:4321",
+    url: process.env.CI ? "http://localhost:8080" : "http://localhost:4321",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
     stdout: "pipe",

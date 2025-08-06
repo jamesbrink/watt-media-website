@@ -16,13 +16,11 @@ describe("Astro Configuration", () => {
   it("should have correct base path configuration", () => {
     const configPath = join(projectRoot, "astro.config.mjs");
     const config = readFileSync(configPath, "utf-8");
-    // Check for conditional base path
+    // Check base path is always '/' for custom domain
+    expect(config).toContain("base: '/'");
+    // Check for conditional site URL with custom domain
     expect(config).toContain(
-      "base: process.env.NODE_ENV === 'production' ? '/watt-media-website' : '/'"
-    );
-    // Check for conditional site URL
-    expect(config).toContain(
-      "site: process.env.NODE_ENV === 'production' ? 'https://jamesbrink.github.io' : 'http://localhost:8080'"
+      "site: process.env.NODE_ENV === 'production' ? 'https://wattmedia.au' : 'http://localhost:8080'"
     );
   });
 });

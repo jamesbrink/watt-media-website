@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Portfolio Lightbox", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/watt-media-website/portfolio");
+    await page.goto("/portfolio");
     // Wait for portfolio items to load
     await page.waitForSelector(".portfolio-item", { timeout: 10000 });
   });
