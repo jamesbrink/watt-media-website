@@ -1,0 +1,6 @@
+- [x] Centralize service pricing into a reusable data module for calculators and pages.
+- [x] Define offer code configuration (code, discount amount, messaging, expiry placeholder).
+- [x] Build an `OfferCalculator` Astro component with client-side validation and price adjustments.
+- [x] Create a `seasonal-offer` page that explains the promotion and embeds the calculator.
+- [x] Surface the seasonal offer in site navigation and any relevant CTAs.
+- [x] Run project quality checks (build or lint) and verify new content renders.

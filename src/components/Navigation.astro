@@ -1,6 +1,7 @@
 ---
 import Link from './Link.astro';
 import { getBasePath } from '../utils/paths';
+import { offersEnabled } from '../data/offers';
 
 export interface Props {
   currentPath?: string;
@@ -14,6 +15,7 @@ const navItems = [
   { href: "/about", label: "ABOUT" },
   { href: "/portfolio", label: "PORTFOLIO" },
   { href: "/services", label: "SERVICES" },
+  ...(offersEnabled ? [{ href: "/seasonal-offer", label: "SEASONAL OFFER" }] : []),
   { href: "/testimonials", label: "TESTIMONIALS" },
   { href: "/contact", label: "CONTACT" }
 ];

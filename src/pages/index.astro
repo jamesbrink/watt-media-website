@@ -2,6 +2,7 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import Image from '../components/Image.astro';
 import Link from '../components/Link.astro';
+import { offersEnabled } from '../data/offers';
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -142,6 +143,23 @@ const structuredData = {
       </div>
     </div>
   </section>
+
+  {offersEnabled && (
+    <section class="bg-gray-900 text-white py-10">
+      <div class="max-w-6xl mx-auto section-padding flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <h3 class="text-2xl font-bold font-quantico mb-2">Season's Greetings Offer</h3>
+          <p class="text-sm text-gray-200">
+            We are sharing seasonal savings with every printed holiday card. Enter your code online
+            to preview adjusted pricing before you book.
+          </p>
+        </div>
+        <Link href="/seasonal-offer" class="btn-secondary inline-flex items-center justify-center">
+          Redeem the Offer -&gt;
+        </Link>
+      </div>
+    </section>
+  )}
 
   <!-- Services Preview -->
   <section class="py-20 bg-white">

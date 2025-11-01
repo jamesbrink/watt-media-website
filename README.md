@@ -43,6 +43,10 @@ To stop the server, press `Ctrl+C` in the terminal, then run:
 docker compose down
 ```
 
+## 🧭 Contributor Guide
+
+New contributors should read [AGENTS.md](./AGENTS.md) for coding standards, test expectations, and pull request requirements before opening changes.
+
 ## 🔧 Alternative: Nix Development
 
 [Nix](https://nixos.org/) is a powerful package manager that ensures everyone has the exact same development environment.

@@ -1,0 +1,332 @@
+---
+import { offerGroups, formatPriceValue, type PriceValue } from '../data/pricing';
+import { seasonalOfferConfig } from '../data/offers';
+
+const offerConfigJson = JSON.stringify(seasonalOfferConfig);
+
+const priceLabel = (price: PriceValue): string =>
+  `${formatPriceValue(price)} (including GST)`;
+---
+
+<section class="space-y-8">
+  <div class="bg-white border border-gray-300 rounded-2xl shadow-sm p-6 md:p-8">
+    <h2 class="text-2xl font-bold font-quantico text-gray-800 mb-4">Redeem Your Offer</h2>
+    <p class="text-gray-700 mb-6">
+      Enter the code printed on your Season's Greetings card to unlock your seasonal pricing before
+      you contact us.
+    </p>
+
+    <form data-offer-form class="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+      <div class="flex flex-col">
+        <label for="offer-code" class="text-sm font-semibold text-gray-700 mb-2">
+          Offer code
+        </label>
+        <input
+          id="offer-code"
+          name="offer-code"
+          type="text"
+          required
+          placeholder="ENTER CODE"
+          class="border border-gray-300 rounded-lg px-4 py-3 text-lg"
+          inputmode="text"
+          autocomplete="off"
+        />
+      </div>
+      <button
+        type="submit"
+        class="btn-primary justify-center inline-flex items-center px-6 py-3 text-base font-semibold"
+      >
+        Apply Code
+      </button>
+      <p data-offer-feedback class="md:col-span-2 text-sm text-gray-700">
+        {seasonalOfferConfig.neutralMessage}
+      </p>
+      <p
+        data-active-code
+        class="hidden md:col-span-2 text-sm font-semibold text-center text-green-700 bg-green-50 border border-green-200 rounded-full px-4 py-2"
+      >
+        Active code applied: <span data-active-code-value></span>
+      </p>
+    </form>
+  </div>
+
+  <p
+    data-offer-locked
+    class="text-center text-sm md:text-base text-gray-700 bg-white border border-dashed border-gray-300 rounded-2xl px-6 py-6"
+  >
+    Enter the printed code above to reveal seasonal pricing and savings.
+  </p>
+
+  <div data-offer-results class="space-y-6 hidden">
+    {offerGroups.map((group) => (
+      <div
+        class="bg-gray-50 border border-gray-300 rounded-2xl overflow-hidden shadow-sm"
+        data-offer-group
+      >
+        <div class="bg-gray-100 px-6 py-4 border-b border-gray-200">
+          <h3 class="text-xl font-bold font-quantico text-gray-900">{group.serviceName}</h3>
+          <p class="text-sm text-gray-700 mt-2">{group.blurb}</p>
+        </div>
+        <div class="divide-y divide-gray-200 bg-white">
+          {group.items.map((item) => (
+            <div
+              class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-6 py-5"
+              data-offer-item
+              data-kind={item.price.kind}
+              data-amount={item.price.kind === 'fixed' ? item.price.amount : undefined}
+              data-min={item.price.kind === 'range' ? item.price.min : undefined}
+              data-max={item.price.kind === 'range' ? item.price.max : undefined}
+            >
+              <div>
+                <p class="font-semibold text-gray-900">{item.label}</p>
+                {item.notes && <p class="text-sm text-gray-700">{item.notes}</p>}
+              </div>
+              <div class="text-sm text-gray-700 md:text-right">
+                <p class="text-xs uppercase tracking-wide text-gray-500">Before</p>
+                <p class="font-semibold text-gray-900" data-role="price-before">
+                  {priceLabel(item.price)}
+                </p>
+                <div data-role="price-after-wrapper" class="hidden mt-3 space-y-1">
+                  <p class="text-xs uppercase tracking-wide text-green-700">
+                    With code applied
+                  </p>
+                  <p class="font-semibold text-green-700" data-role="price-after"></p>
+                  <p class="text-xs text-green-700" data-role="price-savings"></p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+    <div class="bg-white border border-yellow-200 rounded-2xl p-6">
+      <h3 class="text-xl font-bold font-quantico text-gray-800 mb-3">Ready to lock in the offer?</h3>
+      <p class="text-gray-700 mb-4">
+        Share your adjusted pricing with us when you email{' '}
+        <a
+          href="mailto:PhillipWatt@wattmedia.au"
+          class="text-watt-dark font-semibold underline hover:text-watt-yellow transition-colors"
+        >
+          PhillipWatt@wattmedia.au
+        </a>
+        . Discounts apply to the first project milestone and can be combined with personalised
+        quotes.
+      </p>
+      <a href="/contact" class="btn-primary inline-flex items-center">
+        Start a Project Conversation -&gt;
+      </a>
+    </div>
+  </div>
+
+  <script
+    type="application/json"
+    is:inline
+    id="seasonal-offer-config"
+    set:html={offerConfigJson}
+  ></script>
+  <script type="module" is:inline>
+    const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const formatCurrency = (value) =>
+      `$${Number(value).toLocaleString('en-AU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} AUD`;
+
+    const formatPriceValue = (price) =>
+      price.kind === 'fixed'
+        ? formatCurrency(price.amount)
+        : `${formatCurrency(price.min)} - ${formatCurrency(price.max)}`;
+
+    const applyDiscount = (price, discount) => {
+      const safeDiscount = Number.isFinite(discount) && discount > 0 ? discount : 0;
+      if (price.kind === 'fixed') {
+        return {
+          adjusted: {
+            kind: 'fixed',
+            amount: Math.max(0, price.amount - safeDiscount)
+          }
+        };
+      }
+      return {
+        adjusted: {
+          kind: 'range',
+          min: Math.max(0, price.min - safeDiscount),
+          max: Math.max(0, price.max - safeDiscount)
+        }
+      };
+    };
+
+    const labelFromPrice = (price) => `${formatPriceValue(price)} (including GST)`;
+    const discountMessageForPrice = (price, discount) => {
+      if (price.kind === 'fixed') {
+        const savings = Math.min(discount, price.amount);
+        return `You save ${formatCurrency(savings)}.`;
+      }
+      const minReduction = Math.min(discount, price.min);
+      const maxReduction = Math.min(discount, price.max);
+      if (minReduction === maxReduction) {
+        return `You save ${formatCurrency(maxReduction)} per option.`;
+      }
+      return `You save ${formatCurrency(minReduction)} to ${formatCurrency(maxReduction)} per option.`;
+    };
+
+    const OFFER_STORAGE_KEY = 'wattmedia-offer-code';
+    const configElement = document.getElementById('seasonal-offer-config');
+    const config = configElement ? JSON.parse(configElement.textContent ?? '{}') : {};
+    const prefix = (config.prefix || 'SEASONSGREETINGS').toUpperCase();
+    const minDiscount = Number.isFinite(config.minDiscount) ? Number(config.minDiscount) : 1;
+    const maxDiscount = Number.isFinite(config.maxDiscount) ? Number(config.maxDiscount) : 500;
+    const neutralMessage = config.neutralMessage || 'Enter the code from your printed card to check your savings.';
+    const invalidMessage = config.invalidMessage || 'That code is not recognised. Double-check the card and try again.';
+    const successMessage = config.successMessage || 'Seasonal discount applied.';
+    const codePattern = new RegExp(`^${escapeRegex(prefix)}(\\d+)$`, 'i');
+    const form = document.querySelector('[data-offer-form]');
+    const feedback = document.querySelector('[data-offer-feedback]');
+    const items = Array.from(document.querySelectorAll('[data-offer-item]'));
+    const activeCodeBadge = document.querySelector('[data-active-code]');
+    const activeCodeValue = document.querySelector('[data-active-code-value]');
+    const lockedNotice = document.querySelector('[data-offer-locked]');
+    const resultsContainer = document.querySelector('[data-offer-results]');
+
+    const updatePrices = (discount) => {
+      items.forEach((item) => {
+        const beforeLabel = item.querySelector('[data-role="price-before"]');
+        const afterWrapper = item.querySelector('[data-role="price-after-wrapper"]');
+        const afterLabel = item.querySelector('[data-role="price-after"]');
+        const savingsLabel = item.querySelector('[data-role="price-savings"]');
+        const kind = item.dataset.kind;
+        if (!beforeLabel || !afterWrapper || !afterLabel || !savingsLabel || !kind) return;
+
+        const basePrice =
+          kind === 'fixed'
+            ? { kind: 'fixed', amount: Number(item.dataset.amount ?? 0) }
+            : {
+                kind: 'range',
+                min: Number(item.dataset.min ?? 0),
+                max: Number(item.dataset.max ?? 0)
+              };
+
+        const { adjusted } = applyDiscount(basePrice, discount);
+
+        beforeLabel.classList.add('line-through', 'text-gray-500');
+        beforeLabel.classList.remove('text-gray-900');
+
+        afterWrapper.classList.remove('hidden');
+        afterLabel.textContent = labelFromPrice(adjusted);
+        savingsLabel.textContent = discountMessageForPrice(basePrice, discount);
+      });
+    };
+
+    const resetPrices = () => {
+      items.forEach((item) => {
+        const beforeLabel = item.querySelector('[data-role="price-before"]');
+        const afterWrapper = item.querySelector('[data-role="price-after-wrapper"]');
+        const afterLabel = item.querySelector('[data-role="price-after"]');
+        const savingsLabel = item.querySelector('[data-role="price-savings"]');
+        if (!beforeLabel || !afterWrapper || !afterLabel || !savingsLabel) return;
+
+        beforeLabel.classList.remove('line-through', 'text-gray-500');
+        if (!beforeLabel.classList.contains('text-gray-900')) {
+          beforeLabel.classList.add('text-gray-900');
+        }
+        afterWrapper.classList.add('hidden');
+        afterLabel.textContent = '';
+        savingsLabel.textContent = '';
+      });
+      if (resultsContainer && !resultsContainer.classList.contains('hidden')) {
+        resultsContainer.classList.add('hidden');
+      }
+      if (lockedNotice) {
+        lockedNotice.classList.remove('hidden');
+      }
+      if (activeCodeBadge) {
+        activeCodeBadge.classList.add('hidden');
+      }
+      if (activeCodeValue) {
+        activeCodeValue.textContent = '';
+      }
+    };
+
+    const setFeedback = (message, tone) => {
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.classList.remove('text-green-700', 'text-red-600', 'text-gray-700');
+      feedback.classList.add(tone === 'success' ? 'text-green-700' : tone === 'error' ? 'text-red-600' : 'text-gray-700');
+    };
+
+    const parseCode = (normalized) => {
+      const match = normalized.match(codePattern);
+      if (!match) {
+        return undefined;
+      }
+      const amount = Number.parseInt(match[1], 10);
+      if (!Number.isFinite(amount) || amount < minDiscount || amount > maxDiscount) {
+        return undefined;
+      }
+      return { normalized, amount };
+    };
+
+    const applyCode = (codeInput, { updateUrl = true } = {}) => {
+      const rawValue = codeInput.value ?? '';
+      const normalizedInput = rawValue.trim().toUpperCase().replace(/\s+/g, '');
+      if (!normalizedInput) {
+        resetPrices();
+        window.localStorage.removeItem(OFFER_STORAGE_KEY);
+        setFeedback(neutralMessage, 'neutral');
+        return;
+      }
+
+      const parsed = parseCode(normalizedInput);
+      if (!parsed) {
+        resetPrices();
+        window.localStorage.removeItem(OFFER_STORAGE_KEY);
+        setFeedback(invalidMessage, 'error');
+        return;
+      }
+
+      window.localStorage.setItem(OFFER_STORAGE_KEY, parsed.normalized);
+      updatePrices(parsed.amount);
+      if (resultsContainer) {
+        resultsContainer.classList.remove('hidden');
+      }
+      if (lockedNotice) {
+        lockedNotice.classList.add('hidden');
+      }
+      if (activeCodeBadge && activeCodeValue) {
+        activeCodeValue.textContent = parsed.normalized;
+        activeCodeBadge.classList.remove('hidden');
+      }
+      if (updateUrl) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('offer-code', parsed.normalized);
+        window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+      }
+      setFeedback(`${successMessage} Code ${parsed.normalized} applied.`, 'success');
+    };
+
+    if (form) {
+      const codeInput = form.querySelector('input[name="offer-code"]');
+      if (codeInput) {
+        const params = new URLSearchParams(window.location.search);
+        const paramCode = params.get('offer-code');
+        const storedCode = paramCode || window.localStorage.getItem(OFFER_STORAGE_KEY);
+        if (storedCode) {
+          codeInput.value = storedCode;
+          applyCode(codeInput, { updateUrl: false });
+        }
+
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          applyCode(codeInput);
+        });
+
+        codeInput.addEventListener('input', () => {
+          if (!codeInput.value) {
+            resetPrices();
+            setFeedback(neutralMessage, 'neutral');
+            const params = new URLSearchParams(window.location.search);
+            params.delete('offer-code');
+            window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`);
+          }
+        });
+      }
+    }
+  </script>
+</section>

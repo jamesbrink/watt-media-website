@@ -8,86 +8,14 @@ Watt Media Website - A modern, responsive website for a graphic design and multi
 
 ## Tech Stack
 
-- **Framework**: Astro 4.16
+- **Framework**: Astro 4.16 with file-based routing
 - **CSS Framework**: Tailwind CSS 3.5
 - **Testing**: Vitest (unit tests), Playwright (E2E tests)
 - **Type Checking**: TypeScript 5.7
 - **Linting**: ESLint with Astro plugin
 - **Development**: Docker (primary) or Nix flakes
 - **Package Manager**: npm
-- **Deployment**: GitHub Pages
-
-## Project Structure
-
-```
-.
-├── e2e/                        # Playwright end-to-end tests
-│   └── lightbox.spec.ts       # Portfolio lightbox tests
-├── public/                     # Static assets (served directly)
-│   ├── images/                # All website images
-│   │   ├── portfolio/         # Portfolio images organized by category
-│   │   │   ├── branding/      # Logo and brand identity work
-│   │   │   ├── creative-art/  # Creative artwork projects
-│   │   │   ├── marketing/     # Marketing campaign designs
-│   │   │   ├── packaging/     # Product packaging designs
-│   │   │   └── product-design/# Product design mockups
-│   │   └── *.svg/jpg/png      # Service images and branding assets
-│   ├── robots.txt             # SEO robots configuration
-│   ├── sitemap.xml            # XML sitemap for search engines
-│   └── llms.txt               # LLM-specific instructions
-├── src/                        # Source files
-│   ├── components/            # Reusable Astro components
-│   │   ├── ErrorBoundary.astro    # Error handling component
-│   │   ├── Footer.astro           # Site footer with social links
-│   │   ├── Image.astro            # Image component with base path handling
-│   │   └── Navigation.astro       # Main navigation menu
-│   ├── css/                   # Global stylesheets
-│   │   └── main.css           # Tailwind CSS directives and custom styles
-│   ├── layouts/               # Page layouts
-│   │   ├── BaseLayout.astro   # Base HTML structure with SEO
-│   │   └── MainLayout.astro   # Main site layout with nav/footer
-│   ├── pages/                 # File-based routing (routes match filenames)
-│   │   ├── index.astro        # Homepage
-│   │   ├── about.astro        # About page
-│   │   ├── services.astro     # Services overview
-│   │   ├── portfolio.astro    # Portfolio gallery with lightbox
-│   │   ├── contact.astro      # Contact form page
-│   │   ├── testimonials.astro # Client testimonials
-│   │   ├── audio-services.astro           # Audio production service
-│   │   ├── branding-identity.astro        # Branding service
-│   │   ├── print-marketing-design.astro   # Print design service
-│   │   ├── social-media-design.astro      # Social media service
-│   │   └── visual-content-creation.astro  # Visual content service
-│   ├── test/                  # Unit tests
-│   │   ├── components/        # Component tests
-│   │   ├── astro.test.js      # Astro configuration tests
-│   │   ├── images.test.js     # Image integrity tests
-│   │   └── setup.js           # Test configuration
-│   └── env.d.ts               # TypeScript environment types
-├── Configuration Files
-│   ├── astro.config.mjs       # Astro configuration (site, base, integrations)
-│   ├── tailwind.config.js     # Tailwind CSS configuration
-│   ├── postcss.config.js      # PostCSS configuration
-│   ├── vitest.config.js       # Vitest test runner configuration
-│   ├── playwright.config.ts   # Playwright E2E test configuration
-│   ├── tsconfig.json          # TypeScript configuration
-│   ├── .eslintrc.cjs          # ESLint linting rules
-│   ├── .prettierrc.json       # Prettier code formatting
-│   └── .stylelintrc.json      # Stylelint CSS linting
-├── Docker Files
-│   ├── docker-compose.yml     # Docker Compose for development
-│   ├── Dockerfile             # Production Docker image
-│   └── Dockerfile.dev         # Development Docker image with hot reload
-├── Nix Files
-│   ├── flake.nix              # Nix flake configuration
-│   └── flake.lock             # Nix flake lock file
-└── GitHub Actions
-    └── .github/workflows/
-        ├── ci-cd.yml          # CI/CD pipeline with tests
-        ├── claude.yml         # Claude Code integration
-        └── claude-code-review.yml # Claude code review
-
-```
+- **Deployment**: GitHub Pages to wattmedia.au
 
 ## Development Commands
 
@@ -102,7 +30,7 @@ docker compose down   # Stop server
 
 ```bash
 nix develop          # Enter development shell
-dev                  # Start Astro dev server
+dev                  # Start Astro dev server on port 8080
 build                # Build for production
 run-tests            # Run unit tests with Vitest (watch mode)
 run-tests:once       # Run unit tests once (CI mode)
@@ -116,29 +44,33 @@ check                # Run all linters and tests
 ### NPM Scripts
 
 ```bash
-npm run dev          # Start development server on port 4321
+npm run dev          # Start development server on port 8080
 npm run build        # Build for production
-npm run preview      # Preview production build on port 4321
-npm run test         # Run unit tests with Vitest (watch mode)
+npm run preview      # Preview production build
+npm run test         # Run unit tests with Vitest (watch mode, excludes build-validation)
+npm run test:build   # Run build validation test only (validates dist/ output)
 npm run test:ui      # Run tests with UI dashboard
 npm run test:coverage # Run tests with coverage report
 npm run test:e2e     # Run Playwright E2E tests
 npm run test:e2e:ui  # Run Playwright tests with UI
+npm run test:e2e:install # Install Playwright browsers (run once per machine)
 npm run lint         # Run ESLint
 npm run lint:fix     # Run ESLint with auto-fix
-npm run typecheck    # TypeScript type checking
+npm run typecheck    # TypeScript type checking (astro check)
 ```
 
-## Important Notes
+### Running Specific Tests
 
-- **DO NOT READ** image files directly - use `file` command to check their type
-- Astro uses file-based routing - pages in `src/pages/` become routes
-- All static assets must be in `public/` directory (not `src/`)
-- Development server runs on port 8080
-- Hot reload is enabled in both Docker and Nix environments
-- Use professional "we" language, not first-person "I" statements
-- Maintain consistent color scheme with good contrast for accessibility
-- The Image component handles base path for both dev and production environments
+```bash
+# Run a specific test file
+npm test src/test/components/Image.test.js
+
+# Run Playwright tests for a specific file
+npx playwright test e2e/lightbox.spec.ts
+
+# Run tests matching a pattern
+npm test -- --grep "Image component"
+```
 
 ## Pre-commit Checklist
 
@@ -154,75 +86,98 @@ CI=true npm test     # Run all unit tests once
 npm run lint && npm run typecheck && CI=true npm test
 ```
 
-If any of these fail, fix the issues before committing. The CI/CD pipeline will fail if these checks don't pass.
+The CI/CD pipeline will fail if these checks don't pass.
 
-## Design Standards
-
-### Colors
-
-- Primary brand color: `watt-yellow` (#ffee00)
-- Text on light backgrounds: `text-gray-800` (not yellow)
-- Success indicators (checkboxes): `text-green-600`
-- Hover states: Yellow accents on dark backgrounds only
-
-### Social Media
-
-- Facebook: https://www.facebook.com/wattmediaau
-- Instagram: @watt_media_au (https://www.instagram.com/watt_media_au)
-- Links appear in footer with hover effects
-
-### Services Structure
-
-Each service page follows a consistent pattern:
-
-- Hero section with service name
-- Detailed service descriptions with pricing
-- Related services section
-- Call-to-action sections
+For the complete coding checklist, refer to `STANDARDS.md`.
 
 ## Architecture Patterns
 
 ### Component Organization
 
-- **Layouts**: Base layout structure in `src/layouts/` - BaseLayout handles HTML/SEO, MainLayout adds nav/footer
-- **Components**: Reusable components in `src/components/` - Image and Link components handle base path logic
-- **Pages**: File-based routing in `src/pages/` - each file becomes a route
-- **Utilities**: Helper functions in `src/utils/paths.ts` for path management
+- **Layouts**: Base layout structure in `src/layouts/`
+  - `BaseLayout.astro` - HTML structure with SEO meta tags
+  - `MainLayout.astro` - Adds navigation and footer to BaseLayout
+- **Components**: Reusable components in `src/components/`
+  - `Image.astro` - Handles image paths with base path logic
+  - `Link.astro` - Wraps internal links with base path handling
+  - `Navigation.astro` - Main site navigation
+  - `Footer.astro` - Site footer with social media links
+- **Pages**: File-based routing in `src/pages/` - each `.astro` file becomes a route
+- **Utilities**: Helper functions in `src/utils/paths.ts` for centralized path management
 
-### Path Handling
+### Path Handling System
 
-The site uses a centralized path handling system:
+The site uses a centralized path handling system via `src/utils/paths.ts`:
 
-- `src/utils/paths.ts` - Core path utilities (addBasePath, isExternalUrl, etc.)
-- `src/components/Link.astro` - Wraps all internal links with base path handling
-- `src/components/Image.astro` - Handles image paths for different environments
-- Portfolio lightbox uses dynamic path resolution via `import.meta.env.BASE_URL`
+- `addBasePath(url)` - Adds base path to internal URLs
+- `isExternalUrl(url)` - Checks for http/https URLs
+- `isSpecialUrl(url)` - Checks for mailto/tel links
+- `getBasePath()` - Returns the base path from `import.meta.env.BASE_URL`
 
-### Base Path Configuration
+Components using path handling:
+- `Image.astro` - Automatically handles image paths
+- `Link.astro` - Wraps all internal links
+- Portfolio lightbox JavaScript - Uses dynamic path resolution
 
-The site uses conditional base paths:
+### Routing Configuration
 
-- Development: `/` (no base path) - runs on port 4321 locally
-- Production: `/watt-media-website` (for GitHub Pages)
-
-This is handled automatically in:
-
-- `astro.config.mjs` - Site and base configuration
-- `src/components/Image.astro` - Image path handling
-- Portfolio lightbox JavaScript - Dynamic path resolution
+- **Development**: Runs on `http://localhost:8080` (configured in astro.config.mjs)
+- **Production**: Deployed to `https://wattmedia.au` with base path `/`
+- **Static Assets**: Must be placed in `public/` directory
+- **Image Organization**: Portfolio images in `public/images/portfolio/{category}/`
 
 ## Testing Strategy
 
 ### Unit Tests (Vitest)
 
 - Test files: `src/test/**/*.test.js`
-- Configuration: `vitest.config.js`
-- Environment: jsdom
-- Run specific test file: `npm test src/test/components/Image.test.js`
+- Configuration: `vitest.config.js` with jsdom environment
+- Build validation: `src/test/build-validation.test.js` (runs separately)
+- Coverage reports: Available via `npm run test:coverage`
 
 ### E2E Tests (Playwright)
 
 - Test files: `e2e/**/*.spec.ts`
 - Configuration: `playwright.config.ts`
-- Tests run against preview server (port 4321)
+- Tests run against preview server
 - Multiple browser configurations: Chrome, Firefox, Safari, Mobile
+
+## Design Standards
+
+### Brand Guidelines
+
+- Primary brand color: `watt-yellow` (#ffee00)
+- Text on light backgrounds: `text-gray-800` (avoid yellow for readability)
+- Success indicators: `text-green-600`
+- Hover states: Yellow accents on dark backgrounds only
+- Professional tone: Use "we" language, not first-person "I"
+
+### Social Media Integration
+
+- Facebook: https://www.facebook.com/wattmediaau
+- Instagram: @watt_media_au (https://www.instagram.com/watt_media_au)
+- Links appear in footer with hover effects
+
+### Service Page Pattern
+
+Each service page (`audio-services.astro`, `branding-identity.astro`, etc.) follows:
+1. Hero section with service name
+2. Detailed service descriptions with pricing
+3. Related services section
+4. Call-to-action sections
+
+## Contributor Standards
+
+Refer to [AGENTS.md](./AGENTS.md) for:
+- Commit message conventions (Conventional Commits)
+- Pull request requirements
+- Code style guidelines
+- Testing expectations
+
+## Important Constraints
+
+- **DO NOT READ** image files directly - use `file` command to check type
+- All static assets must be in `public/` directory
+- Hot reload is enabled in both Docker and Nix environments
+- Build output goes to `dist/` directory
+- Ensure accessibility with proper contrast ratios
